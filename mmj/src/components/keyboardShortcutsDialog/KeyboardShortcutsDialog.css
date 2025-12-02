@@ -1,0 +1,153 @@
+.keyboard-shortcuts-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.keyboard-shortcuts-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.keyboard-shortcuts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.keyboard-shortcuts-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.keyboard-shortcuts-close {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.keyboard-shortcuts-close:hover {
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.keyboard-shortcuts-content {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.keyboard-shortcut-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.keyboard-shortcut-item:hover {
+  background: var(--hover-bg);
+}
+
+.keyboard-shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.keyboard-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1),
+              0 1px 0 rgba(255, 255, 255, 0.1) inset;
+}
+
+.keyboard-plus {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding: 0 4px;
+}
+
+.keyboard-shortcut-description {
+  flex: 1;
+  text-align: right;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+@media (max-width: 640px) {
+  .keyboard-shortcuts-dialog {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .keyboard-shortcuts-header {
+    padding: 16px;
+  }
+
+  .keyboard-shortcuts-content {
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .keyboard-shortcut-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .keyboard-shortcut-keys {
+    min-width: auto;
+  }
+
+  .keyboard-shortcut-description {
+    text-align: left;
+    font-size: 0.875rem;
+  }
+}
+

@@ -1,0 +1,356 @@
+/* Chat Container */
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Welcome Screen (before first message) */
+.welcome-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text-primary);
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.welcome-input-wrapper {
+  width: 100%;
+  max-width: 768px;
+}
+
+/* Chat Messages (after first message) */
+.chat-messages {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.message-wrapper {
+  display: flex;
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.message-wrapper.user {
+  justify-content: flex-end;
+}
+
+.message-wrapper.bot {
+  justify-content: flex-start;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message-text {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  line-height: 1.5;
+  font-size: 15px;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.message-wrapper.user .message-text {
+  background: var(--message-user-bg);
+  border-bottom-right-radius: 4px;
+}
+
+.message-wrapper.bot .message-text {
+  background: var(--message-bot-bg);
+  border-bottom-left-radius: 4px;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+}
+
+.loading-indicator .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-secondary);
+  opacity: 0.6;
+  animation: dotPulse 1.4s infinite ease-in-out;
+}
+
+.loading-indicator .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-indicator .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-indicator .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dotPulse {
+  0%, 60%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Message Actions */
+.message-wrapper.bot {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.message-wrapper.user {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.message-actions {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  margin-top: 4px;
+  margin-left: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message-wrapper.bot:hover .message-actions,
+.message-wrapper.user:hover .message-actions {
+  opacity: 1;
+}
+
+.message-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.message-action-btn:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.message-action-btn:active {
+  transform: scale(0.95);
+}
+
+.message-action-btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.message-action-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Version Navigation - inline with actions */
+.version-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.version-nav-btn:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--hover-bg);
+}
+
+.version-nav-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.version-indicator {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  padding: 0 4px;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Message Editing */
+.message-edit-container {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: var(--message-user-bg);
+  color: var(--text-primary);
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+}
+
+.message-edit-textarea:focus {
+  border-color: var(--accent-color, #4A9EFF);
+}
+
+.message-edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.edit-save-btn,
+.edit-cancel-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-save-btn {
+  background: var(--accent-color, #4A9EFF);
+  color: white;
+}
+
+.edit-save-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.edit-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.edit-cancel-btn {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.edit-cancel-btn:hover {
+  background: var(--sidebar-hover);
+}
+
+/* Feedback Buttons */
+.feedback-selected {
+  position: relative;
+}
+
+.feedback-selected::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 8px;
+  z-index: -1;
+}
+
+.feedback-like {
+  color: #10b981 !important;
+}
+
+.feedback-like::after {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.feedback-dislike {
+  color: #ef4444 !important;
+}
+
+.feedback-dislike::after {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.file-download-inline {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.file-download-btn, .file-retry-btn {
+  background: var(--message-user-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+
+.file-download-btn:hover, .file-retry-btn:hover {
+  background: var(--hover-bg);
+}
+
+.file-status {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.file-status.error { color: var(--error-color); }

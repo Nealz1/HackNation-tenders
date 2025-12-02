@@ -1,0 +1,57 @@
+.error-banner {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 700px;
+  width: calc(100% - 320px);
+  background-color: #ef4444;
+  color: white;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-left: 130px;
+}
+
+@media (max-width: 768px) {
+  .error-banner {
+    width: 90%;
+    margin-left: 0;
+  }
+}
+
+.error-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+
+.error-banner-content svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.error-banner-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  margin-left: 8px;
+}
+
+.error-banner-close:hover {
+  opacity: 1;
+}

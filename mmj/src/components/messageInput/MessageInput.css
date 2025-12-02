@@ -1,0 +1,199 @@
+/* Input Container */
+.input-container {
+  padding: 16px;
+  background: var(--bg-primary);
+  overflow: visible;
+}
+
+.input-wrapper {
+  max-width: 768px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 24px;
+  padding: 10px 12px;
+  transition: border-color 0.2s;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0.1);
+  overflow: visible;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--text-secondary);
+  box-shadow: 0 0 0 2px rgba(25, 195, 125, 0.1);
+}
+
+.input-wrapper textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  resize: none;
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 24px;
+  padding: 6px 4px;
+  min-height: 24px;
+}
+
+.input-wrapper textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+.input-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  border-radius: 10px;
+  padding: 0;
+  margin-bottom: 2px;
+}
+
+.input-icon-btn:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.input-icon-btn:active {
+  transform: scale(0.95);
+}
+
+.input-icon-btn svg {
+  stroke: currentColor;
+  width: 22px;
+  height: 22px;
+}
+
+.input-icon-btn.recording {
+  background: #ef4444;
+  color: white;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.input-icon-btn.recording:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.input-icon-btn.processing {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.send-btn {
+  background: var(--btn-primary);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  margin-bottom: 2px;
+}
+
+.send-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.send-btn svg {
+  color: white;
+  stroke: white;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: var(--btn-primary-hover);
+  transform: scale(1.05);
+}
+
+.send-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: var(--text-secondary);
+}
+
+.send-btn:disabled svg {
+  stroke: white;
+  opacity: 0.6;
+}
+
+.send-btn.cancel-btn {
+  background: #6b7280;
+  opacity: 1;
+}
+
+.send-btn.cancel-btn:hover {
+  background: #4b5563;
+  transform: scale(1.05);
+}
+
+.cancel-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+
+/* Browser Autocomplete Styling Prevention */
+.input-wrapper textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-primary) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.input-wrapper textarea:-webkit-autofill:hover,
+.input-wrapper textarea:-webkit-autofill:focus,
+.input-wrapper textarea:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-primary) inset !important;
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+  .input-wrapper textarea {
+    transition: all 0.2s;
+  }
+}

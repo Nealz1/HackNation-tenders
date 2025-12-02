@@ -1,0 +1,2 @@
+export { GroupAutocomplete } from './GroupAutocomplete';
+

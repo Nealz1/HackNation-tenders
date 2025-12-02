@@ -1,0 +1,2 @@
+export { GroupView } from './GroupView';
+

@@ -1,0 +1,51 @@
+.group-autocomplete-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.group-autocomplete-wrapper input,
+.group-autocomplete-wrapper textarea {
+  width: 100%;
+}
+
+.group-autocomplete-dropdown {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-primary);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10000;
+  pointer-events: auto;
+}
+
+.group-autocomplete-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 14px;
+  border-bottom: 1px solid var(--input-border);
+  transition: background-color 0.15s;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.group-autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.group-autocomplete-item:hover,
+.group-autocomplete-item.selected {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.group-autocomplete-item.selected {
+  background: var(--btn-primary);
+  color: white;
+}
+
