@@ -3,8 +3,6 @@ import { STORAGE_KEYS } from '../config/constants';
 import type { Language } from '../types/common';
 
 export interface AppState {
-  darkMode: boolean;
-  setDarkMode: (mode: boolean) => void;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   language: Language;
@@ -16,11 +14,6 @@ export interface AppState {
 }
 
 export const useAppState = (): AppState => {
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
-    return saved ? JSON.parse(saved) : true;
-  });
-
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.SIDEBAR_OPEN);
     return saved ? JSON.parse(saved) : true;
@@ -39,10 +32,6 @@ export const useAppState = (): AppState => {
   const [isInputFocused, setIsInputFocused] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.DARK_MODE, JSON.stringify(darkMode));
-  }, [darkMode]);
-
-  useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SIDEBAR_OPEN, JSON.stringify(sidebarOpen));
   }, [sidebarOpen]);
 
@@ -59,8 +48,6 @@ export const useAppState = (): AppState => {
   }, [currentSessionId]);
 
   return {
-    darkMode,
-    setDarkMode,
     sidebarOpen,
     setSidebarOpen,
     language,

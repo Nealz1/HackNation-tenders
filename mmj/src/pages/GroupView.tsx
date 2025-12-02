@@ -10,14 +10,13 @@ import type { Group, ChatSession } from "../types";
 
 interface GroupViewProps {
   language: "en" | "pl";
-  darkMode: boolean;
   onSelectSession: (sessionId: number) => void;
   onSendMessageInGroup: (message: string, groupId: number) => Promise<void>;
   isLoading: boolean;
   onFocusChange: (focused: boolean) => void;
 }
 
-export const GroupView = ({ language, darkMode, onSelectSession, onSendMessageInGroup, isLoading, onFocusChange }: GroupViewProps) => {
+export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isLoading, onFocusChange }: GroupViewProps) => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const [group, setGroup] = useState<Group | null>(null);
@@ -94,8 +93,8 @@ export const GroupView = ({ language, darkMode, onSelectSession, onSendMessageIn
   }
 
   return (
-    <div className={`group-view ${darkMode ? 'dark' : 'light'}`}>
-      <BackgroundLogo darkMode={darkMode} />
+    <div className="group-view light">
+      <BackgroundLogo />
       
       <div className="group-view-header">
         <button className="group-back-btn" onClick={handleBack}>

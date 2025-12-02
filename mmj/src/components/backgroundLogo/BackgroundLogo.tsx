@@ -1,12 +1,7 @@
 import { CSSProperties } from "react";
-import watLogoDark from "../../assets/wat_logo_dark.png";
 import watLogoLight from "../../assets/wat_logo_light.png";
 
-interface BackgroundLogoProps {
-  darkMode: boolean;
-}
-
-export const BackgroundLogo = ({ darkMode }: BackgroundLogoProps) => {
+export const BackgroundLogo = () => {
   const style: CSSProperties = {
     position: 'absolute',
     top: '50%',
@@ -14,7 +9,7 @@ export const BackgroundLogo = ({ darkMode }: BackgroundLogoProps) => {
     transform: 'translate(-50%, -50%)',
     width: '600px',
     height: '600px',
-    backgroundImage: `url(${darkMode ? watLogoDark : watLogoLight})`,
+    backgroundImage: `url(${watLogoLight})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',

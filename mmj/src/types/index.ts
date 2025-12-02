@@ -55,4 +55,4 @@ export interface Group {
   session_count?: number;
 }
 
-export type { SessionId, Language, ThemeMode, BaseDialogProps, ConfirmDialogProps } from './common';
+export type { SessionId, Language, BaseDialogProps, ConfirmDialogProps } from './common';

@@ -1,8 +1,8 @@
 
 interface Capability {
   icon: string;
-  titleKey: keyof typeof import('./translations').translations['en']['help'];
-  descriptionKey: keyof typeof import('./translations').translations['en']['help'];
+  titleKey: keyof typeof import('./translations').translations['pl']['help'];
+  descriptionKey: keyof typeof import('./translations').translations['pl']['help'];
 }
 
 export const helpCapabilities: Capability[] = [
@@ -49,4 +49,3 @@ export const helpExampleKeys = [
   "example3",
   "example4",
 ] as const;
-

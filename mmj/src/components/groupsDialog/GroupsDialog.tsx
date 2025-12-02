@@ -7,7 +7,6 @@ import { Group } from "../../types";
 interface GroupsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  language: "en" | "pl";
   groups: Group[];
   onCreateGroup: (name: string) => void;
   onSelectGroup?: (groupId: number) => void;
@@ -21,7 +20,6 @@ interface GroupsDialogProps {
 export const GroupsDialog = ({
   isOpen,
   onClose,
-  language,
   groups,
   onCreateGroup,
   onSelectGroup,
@@ -33,7 +31,7 @@ export const GroupsDialog = ({
 }: GroupsDialogProps) => {
   const [groupName, setGroupName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const t = useTranslations(language);
+  const { t } = useTranslations();
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -83,7 +81,7 @@ export const GroupsDialog = ({
         <div className="groups-content">
           <h2 className="groups-title">
             {selectMode
-              ? (language === 'pl' ? 'Wybierz grupę' : 'Select Group')
+              ? 'Wybierz grupę'
               : t.groups.title
             }
           </h2>

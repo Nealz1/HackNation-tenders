@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./SettingsDialog.css";
-import { CloseIcon, ChevronDownIcon, SunIcon, MoonIcon, CheckIcon, ArchiveIcon, TrashIcon, CopyIcon } from "../icons";
+import { CloseIcon, ArchiveIcon, TrashIcon, CopyIcon } from "../icons";
 import { useTranslations } from "../../hooks/useTranslations";
 import { useAccount } from "../../hooks/useAccount";
 import { getModifierKey, getEscapeKey } from "../../utils/platformUtils";
@@ -9,10 +9,6 @@ import { GroupAutocomplete } from "../groupAutocomplete";
 interface SettingsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  darkMode: boolean;
-  onThemeChange: (isDark: boolean) => void;
-  language: "en" | "pl";
-  onLanguageChange: (lang: "en" | "pl") => void;
   activeSessions?: any[];
   onArchiveMultiple?: (sessionIds: number[]) => Promise<void>;
   onDeleteMultiple?: (sessionIds: number[]) => Promise<void>;
@@ -25,42 +21,22 @@ type Tab = "general" | "account" | "notifications" | "shortcuts";
 export const SettingsDialog = ({
   isOpen,
   onClose,
-  darkMode,
-  onThemeChange,
-  language,
-  onLanguageChange,
   activeSessions = [],
   onArchiveMultiple,
   onDeleteMultiple,
   user,
 }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("general");
-  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const [showChatSelector, setShowChatSelector] = useState(false);
   const [selectedChatIds, setSelectedChatIds] = useState<number[]>([]);
   const [operationType, setOperationType] = useState<'archive' | 'delete' | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
-  const languageDropdownRef = useRef<HTMLDivElement>(null);
-  const t = useTranslations(language);
+  const { t, language } = useTranslations();
   const { accountInfo, updateAccountInfo, resetAccountInfo, getFullEmail } = useAccount(user);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target as Node)) {
-        setLanguageDropdownOpen(false);
-      }
-    };
 
-    if (languageDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [languageDropdownOpen]);
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -84,12 +60,7 @@ export const SettingsDialog = ({
     };
   }, [isOpen, showConfirmDialog, showChatSelector, onClose]);
 
-  const languageOptions: Array<{ value: "en" | "pl"; label: string; flag: string }> = [
-    { value: 'en', label: 'English', flag: '🇬🇧' },
-    { value: 'pl', label: 'Polski', flag: '🇵🇱' }
-  ];
 
-  const selectedLanguage = languageOptions.find(opt => opt.value === language);
 
 
   const handleArchiveAll = () => {
@@ -230,62 +201,7 @@ export const SettingsDialog = ({
             <>
               <h2 className="settings-title">{t.settings.general}</h2>
 
-              <div className="settings-section">
-                <div className="settings-row">
-                  <div className="settings-label">
-                    <span>{t.settings.theme}</span>
-                  </div>
-                  <div className="settings-control">
-                    <button
-                      className="theme-toggle-btn"
-                      onClick={() => onThemeChange(!darkMode)}
-                      title={darkMode ? t.settings.switchToLight : t.settings.switchToDark}
-                    >
-                      {darkMode ? <SunIcon /> : <MoonIcon />}
-                    </button>
-                  </div>
-                </div>
 
-                <div className="settings-row">
-                  <div className="settings-label">
-                    <span>{t.settings.language}</span>
-                  </div>
-                  <div className="settings-control" ref={languageDropdownRef}>
-                    <button
-                      className="custom-select-btn"
-                      onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
-                    >
-                      <span className="language-option">
-                        <span className="language-flag">{selectedLanguage?.flag}</span>
-                        {selectedLanguage?.label}
-                      </span>
-                      <ChevronDownIcon className={`select-chevron ${languageDropdownOpen ? 'open' : ''}`} />
-                    </button>
-                    {languageDropdownOpen && (
-                      <div className="custom-dropdown">
-                        {languageOptions.map((option) => (
-                          <button
-                            key={option.value}
-                            className={`custom-dropdown-item ${language === option.value ? 'selected' : ''}`}
-                            onClick={() => {
-                              onLanguageChange(option.value);
-                              setLanguageDropdownOpen(false);
-                            }}
-                          >
-                            <span className="language-option">
-                              <span className="language-flag">{option.flag}</span>
-                              {option.label}
-                            </span>
-                            {language === option.value && <CheckIcon />}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="settings-section-divider"></div>
 
               <div className="settings-section">
                 <h3 className="settings-section-title">{t.settings.chatManagement}</h3>
@@ -537,8 +453,7 @@ export const SettingsDialog = ({
                         >
                           {emailCopied ? (
                             <>
-                              <CheckIcon width={16} height={16} />
-                              {language === 'pl' ? 'Skopiowano!' : 'Copied!'}
+                              ✓ {language === 'pl' ? 'Skopiowano!' : 'Copied!'}
                             </>
                           ) : (
                             <>

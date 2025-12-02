@@ -2,7 +2,7 @@ export type SessionId = number | string;
 
 export type Language = "en" | "pl";
 
-export type ThemeMode = "light" | "dark";
+
 
 export interface BaseDialogProps {
   isOpen: boolean;
@@ -16,4 +16,3 @@ export interface ConfirmDialogProps extends BaseDialogProps {
   cancelText: string;
   confirmText: string;
 }
-

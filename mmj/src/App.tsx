@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./App.css";
 import { dispatchCustomEvent } from "./utils/eventUtils";
 import { Sidebar } from "./components/sidebar";
@@ -12,12 +12,11 @@ import { ArchivesDialog } from "./components/archivesDialog";
 import { HelpDialog } from "./components/helpDialog";
 import { BackgroundLogo } from "./components/backgroundLogo";
 import { ErrorBanner } from "./components/errorBanner";
-import { AuthErrorDialog } from "./components/authErrorDialog";
+
 import { SearchDialog } from "./components/searchDialog";
 import { GroupsDialog } from "./components/groupsDialog";
 import { GroupView } from "./pages/GroupView";
-import { useAuth } from "./hooks/useAuth";
-import { useSessionValidation } from "./hooks/useSessionValidation";
+
 import { useLanguage } from "./hooks/useLanguage";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useChatHistory } from "./hooks/useChatHistory";
@@ -31,14 +30,7 @@ import { STORAGE_KEYS } from "./config/constants";
 
 function App() {
   const { sessionId: urlSessionId, groupId: urlGroupId } = useParams<{ sessionId?: string; groupId?: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { t, language, setLanguage } = useLanguage();
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
-    return saved ? JSON.parse(saved) : true;
-  });
-
+  const { t, language } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.SIDEBAR_OPEN);
     return saved ? JSON.parse(saved) : true;
@@ -58,16 +50,9 @@ function App() {
   const [groupsSelectedSessionId, setGroupsSelectedSessionId] = useState<number | string | null>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
 
-  const {
-    user,
-    showAuthErrorDialog,
-    authErrorMessage,
-    handleLogin,
-    handleLogout,
-    handleSessionExpired,
-    closeAuthErrorDialog,
-    authInitialized,
-  } = useAuth();
+  const user = null;
+  const handleLogin = () => {};
+  const handleLogout = () => {};
 
   const {
     groups,
@@ -132,8 +117,6 @@ function App() {
     refreshArchivedSessions
   );
 
-  useSessionValidation(!!user, handleSessionExpired);
-
   useSessionLoader(
     urlSessionId,
     user,
@@ -152,7 +135,6 @@ function App() {
     onToggleSidebar: () => setSidebarOpen(!sidebarOpen),
     onOpenSettings: () => setSettingsOpen(true),
     onOpenArchives: () => setArchivesOpen(true),
-    ...(user && { onOpenGroups: () => setGroupsOpen(true) }),
     onFocusInput: () => {
       const input = document.querySelector<HTMLInputElement>('.message-input');
       input?.focus();
@@ -188,22 +170,10 @@ function App() {
   }, [currentSessionId]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.DARK_MODE, JSON.stringify(darkMode));
-  }, [darkMode]);
-
-  useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SIDEBAR_OPEN, JSON.stringify(sidebarOpen));
   }, [sidebarOpen]);
 
-  useEffect(() => {
-    if (!authInitialized) return; // wait until auth resolved
-    if (user) return; // logged in - do nothing
-    const path = location.pathname;
-    const protectedPattern = /^\/(c|g)\//;
-    if (protectedPattern.test(path)) {
-      navigate('/', { replace: true });
-    }
-  }, [authInitialized, user, location.pathname, navigate]);
+
 
   const handleDeleteSession = (sessionId: number | string) => {
     setSessionToDelete(sessionId);
@@ -300,9 +270,8 @@ function App() {
   };
 
   return (
-    <div className={`app ${darkMode ? 'dark' : 'light'}`}>
+    <div className="app light">
       <Sidebar
-        darkMode={darkMode}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         user={user}
@@ -313,7 +282,6 @@ function App() {
         onOpenHelp={() => setHelpOpen(true)}
         onOpenSearch={() => setSearchDialogOpen(true)}
         onOpenGroups={() => handleOpenGroups()}
-        language={language}
         sessions={sessions}
         currentSessionId={currentSessionId}
         onNewChat={sessionOperations.handleNewChat}
@@ -336,7 +304,6 @@ function App() {
       {urlGroupId ? (
         <GroupView
           language={language}
-          darkMode={darkMode}
           onSelectSession={sessionOperations.handleSelectSession}
           onSendMessageInGroup={handleSendMessageInGroup}
           isLoading={isLoading}
@@ -344,7 +311,7 @@ function App() {
         />
       ) : (
         <main className="main-content">
-          <BackgroundLogo darkMode={darkMode} />
+          <BackgroundLogo />
 
           <Header
             sidebarOpen={sidebarOpen}
@@ -362,7 +329,6 @@ function App() {
           onRegenerateMessage={handleRegenerateMessage}
           onEditMessage={handleEditMessage}
           onNavigateVersion={handleNavigateVersion}
-          darkMode={darkMode}
           urlSessionId={urlSessionId}
           isLoading={isLoading}
           setMessages={setMessages}
@@ -382,10 +348,6 @@ function App() {
       <SettingsDialog
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        darkMode={darkMode}
-        onThemeChange={setDarkMode}
-        language={language}
-        onLanguageChange={setLanguage}
         activeSessions={sessions.filter(s => !s.is_archived)}
         onArchiveMultiple={sessionOperations.handleArchiveMultiple}
         onDeleteMultiple={sessionOperations.handleDeleteMultiple}
@@ -417,7 +379,6 @@ function App() {
         onClose={() => setSearchDialogOpen(false)}
         sessions={sessions}
         onSelectSession={sessionOperations.handleSelectSession}
-        language={language}
       />
 
       <HelpDialog
@@ -425,13 +386,7 @@ function App() {
         onClose={() => setHelpOpen(false)}
       />
 
-      <AuthErrorDialog
-        isOpen={showAuthErrorDialog}
-        message={authErrorMessage}
-        onClose={closeAuthErrorDialog}
-        title={t.auth.errorTitle}
-        okText={t.auth.ok}
-      />
+
 
       {chatNotFoundError && (
         <ErrorBanner
@@ -449,7 +404,6 @@ function App() {
               setGroupsSelectMode(false);
               setGroupsSelectedSessionId(null);
             }}
-            language={language}
             groups={groups}
             onCreateGroup={handleCreateGroup}
             onSelectGroup={handleSelectGroup}
@@ -472,12 +426,10 @@ function App() {
             isOpen={groupDeleteDialogOpen}
             onClose={() => setGroupDeleteDialogOpen(false)}
             onConfirm={confirmDeleteGroup}
-            title={language === 'pl' ? 'Usuń grupę' : 'Delete group'}
-            message={language === 'pl'
-              ? 'Spowoduje to trwałe usunięcie grupy oraz wszystkich rozmów w niej zawartych.'
-              : 'This will permanently delete the group and all chats within it.'}
+            title='Usuń grupę'
+            message='Spowoduje to trwałe usunięcie grupy oraz wszystkich rozmów w niej zawartych.'
             cancelText={t.sidebar.cancel}
-            deleteText={language === 'pl' ? 'Usuń' : 'Delete'}
+            deleteText='Usuń'
           />
         </>
       )}

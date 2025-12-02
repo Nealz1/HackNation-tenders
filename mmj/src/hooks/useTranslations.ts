@@ -1,5 +1,8 @@
-import { translations, Language } from "../config/translations";
+import { translations } from "../config/translations";
 
-export const useTranslations = (language: Language) => {
-  return translations[language];
+export const useTranslations = () => {
+  return {
+    t: translations.pl,
+    language: 'pl' as const
+  };
 };

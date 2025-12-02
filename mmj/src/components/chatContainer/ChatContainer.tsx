@@ -169,7 +169,6 @@ export interface ChatContainerProps {
   onRegenerateMessage?: (index: number) => void;
   onEditMessage?: (index: number, newContent: string) => void;
   onNavigateVersion?: (index: number, direction: 'prev' | 'next') => void;
-  darkMode: boolean;
   urlSessionId?: string;
   isLoading?: boolean;
   setMessages?: React.Dispatch<React.SetStateAction<Message[]>>;
@@ -181,7 +180,6 @@ export const ChatContainer = ({
   onRegenerateMessage,
   onEditMessage,
   onNavigateVersion,
-  darkMode,
   urlSessionId,
   isLoading,
   setMessages
@@ -269,7 +267,7 @@ export const ChatContainer = ({
 
   if (!urlSessionId && !hasUserMessages) {
     return (
-      <div className={`chat-container ${darkMode ? 'dark' : 'light'}`}>
+      <div className="chat-container light">
         <div className="welcome-screen">
           <h1 className="welcome-title">{welcomeMessage}</h1>
           <div className="welcome-input-wrapper">
@@ -281,7 +279,7 @@ export const ChatContainer = ({
   }
 
   return (
-    <div className={`chat-container ${darkMode ? 'dark' : 'light'}`}>
+    <div className="chat-container light">
       <div className="chat-messages">
         {messages.map((msg, i) => {
           if (i === 0 && msg.sender === "bot" && msg.text === welcomeMessage) {

@@ -10,7 +10,6 @@ interface SearchDialogProps {
   onClose: () => void;
   sessions: ChatSession[];
   onSelectSession: (sessionId: number | string) => void;
-  language: "en" | "pl";
 }
 
 interface SearchResult {
@@ -88,31 +87,19 @@ const SkeletonLoader = () => (
   </div>
 );
 
-const EmptyState = ({ language }: { language: "en" | "pl" }) => (
+const EmptyState = () => (
   <div className="search-dialog-empty">
     <SearchIcon width={48} height={48} />
-    <p>
-      {language === "pl"
-        ? "Wyszukaj wiadomości w czatach"
-        : "Search for messages in chats"}
-    </p>
-    <span>
-      {language === "pl"
-        ? "Wpisz zapytanie, aby rozpocząć wyszukiwanie"
-        : "Type a query to start searching"}
-    </span>
+    <p>Wyszukaj wiadomości w czatach</p>
+    <span>Wpisz zapytanie, aby rozpocząć wyszukiwanie</span>
   </div>
 );
 
-const NoResults = ({ language }: { language: "en" | "pl" }) => (
+const NoResults = () => (
   <div className="search-dialog-no-results">
     <SearchIcon width={48} height={48} />
-    <p>{language === "pl" ? "Nie znaleziono" : "No results found"}</p>
-    <span>
-      {language === "pl"
-        ? "Spróbuj innego zapytania"
-        : "Try a different search"}
-    </span>
+    <p>Nie znaleziono</p>
+    <span>Spróbuj innego zapytania</span>
   </div>
 );
 
@@ -121,7 +108,6 @@ export const SearchDialog = ({
   onClose,
   sessions,
   onSelectSession,
-  language,
 }: SearchDialogProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -219,16 +205,15 @@ export const SearchDialog = ({
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return language === "pl" ? "Dziś" : "Today";
-    if (diffDays === 1) return language === "pl" ? "Wczoraj" : "Yesterday";
-    if (diffDays <= 7)
-      return language === "pl" ? `${diffDays} dni temu` : `${diffDays} days ago`;
+    if (diffDays === 0) return "Dziś";
+    if (diffDays === 1) return "Wczoraj";
+    if (diffDays <= 7) return `${diffDays} dni temu`;
 
-    return date.toLocaleDateString(language === "pl" ? "pl-PL" : "en-US", {
+    return date.toLocaleDateString("pl-PL", {
       month: "short",
       day: "numeric",
     });
-  }, [language]);
+  }, []);
 
   const handleSelectResult = useCallback((sessionId: number | string) => {
     onSelectSession(sessionId);
@@ -248,9 +233,7 @@ export const SearchDialog = ({
             <input
               ref={inputRef}
               type="text"
-              placeholder={
-                language === "pl" ? "Przeszukaj czaty" : "Search chats"
-              }
+              placeholder="Przeszukaj czaty"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-dialog-input"
@@ -270,12 +253,12 @@ export const SearchDialog = ({
         </div>
 
         <div className="search-dialog-content">
-          {!searchQuery && <EmptyState language={language} />}
+          {!searchQuery && <EmptyState />}
 
           {searchQuery && isSearching && <SkeletonLoader />}
 
           {searchQuery && !isSearching && searchResults.length === 0 && (
-            <NoResults language={language} />
+            <NoResults />
           )}
 
           {searchQuery && !isSearching && searchResults.length > 0 && (

@@ -25,7 +25,6 @@ import type { User, ChatSession, Group } from "../../types";
 import { useState } from "react";
 
 interface SidebarProps {
-  darkMode: boolean;
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
   user: User | null;
@@ -36,7 +35,6 @@ interface SidebarProps {
   onOpenHelp?: () => void;
   onOpenSearch?: () => void;
   onOpenGroups?: () => void;
-  language: "en" | "pl";
   sessions: ChatSession[];
   currentSessionId: number | string | null;
   onNewChat: () => void;
@@ -400,7 +398,6 @@ const GroupItem = ({
   onArchiveSession,
   onDeleteSession,
                        t,
-  language,
 }: {
   group: Group;
   currentGroupId: string | null;
@@ -418,7 +415,6 @@ const GroupItem = ({
   onDeleteSession: (sessionId: number | string) => void;
   onLoadGroupSessions?: (groupId: number) => Promise<ChatSession[]>;
   t: any;
-  language: string;
 }) => {
   const getGroupChatPreview = () => {
     if (groupSessions[group.id]) {
@@ -468,7 +464,7 @@ const GroupItem = ({
           ))}
           {getGroupChatPreview().length === 0 && (
             <div className="group-preview-empty">
-              {language === 'pl' ? 'Brak rozmów' : 'No chats'}
+              Brak rozmów
             </div>
           )}
         </div>
@@ -478,7 +474,6 @@ const GroupItem = ({
 };
 
 export const Sidebar = ({
-  darkMode,
   sidebarOpen,
   user,
   onLogin,
@@ -488,7 +483,6 @@ export const Sidebar = ({
   onOpenHelp,
   onOpenSearch,
   onOpenGroups,
-  language,
   sessions,
   currentSessionId,
   onNewChat,
@@ -507,7 +501,7 @@ export const Sidebar = ({
   onLoadGroupSessions
 }: SidebarProps) => {
   const userMenu = useDropdownMenu();
-  const t = useTranslations(language);
+  const { t } = useTranslations();
   const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
 
   const isLoggedIn = !!user;
@@ -538,10 +532,10 @@ export const Sidebar = ({
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return t.sidebar.today;
-    if (diffDays === 1) return language === 'pl' ? 'Wczoraj' : 'Yesterday';
-    if (diffDays <= 7) return language === 'pl' ? 'Ostatnie 7 dni' : 'Last 7 days';
-    if (diffDays <= 30) return language === 'pl' ? 'Ostatnie 30 dni' : 'Last 30 days';
-    return language === 'pl' ? 'Starsze' : 'Older';
+    if (diffDays === 1) return 'Wczoraj';
+    if (diffDays <= 7) return 'Ostatnie 7 dni';
+    if (diffDays <= 30) return 'Ostatnie 30 dni';
+    return 'Starsze';
   };
 
   const sessionsNotInGroups = sessions.filter(session => !(session as any).is_in_group);
@@ -558,7 +552,7 @@ export const Sidebar = ({
       <div className="sidebar-header">
         <div className="sidebar-title">
           <img
-            src={darkMode ? "/watdark.svg" : "/watlight.svg"}
+            src="/watlight.svg"
             alt="WAT"
             className="sidebar-logo"
           />
@@ -644,7 +638,6 @@ export const Sidebar = ({
               onDeleteSession={onDeleteSession}
               onLoadGroupSessions={onLoadGroupSessions}
               t={t}
-              language={language}
             />
           ))}
           {groups.length > 5 && (
@@ -653,7 +646,7 @@ export const Sidebar = ({
               onClick={onOpenGroups}
             >
               <FolderIcon width={14} height={14} />
-              <span>{language === 'pl' ? '+' + (groups.length - 5) + ' więcej' : '+' + (groups.length - 5) + ' more'}</span>
+              <span>{'+' + (groups.length - 5) + ' więcej'}</span>
             </div>
           )}
         </div>

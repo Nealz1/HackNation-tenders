@@ -1,7 +1,6 @@
 export const API_BASE_URL = 'http://localhost:8000';
 
 export const STORAGE_KEYS = {
-  DARK_MODE: 'darkMode',
   SIDEBAR_OPEN: 'sidebarOpen',
   AUTH_TOKEN: 'auth_token',
   LANGUAGE: 'language',

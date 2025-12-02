@@ -79,9 +79,7 @@
   font-size: 0.9em;
 }
 
-.dark .inline-code {
-  background: rgba(255, 255, 255, 0.1);
-}
+
 
 .code-block {
   display: block;
@@ -94,21 +92,12 @@
   margin: 0.5em 0;
 }
 
-.dark .code-block {
-  background: rgba(255, 255, 255, 0.1);
-}
-
 /* Blockquotes */
 .message-content blockquote {
   margin: 0.5em 0;
   padding-left: 1em;
   border-left: 3px solid rgba(0, 0, 0, 0.2);
   color: rgba(0, 0, 0, 0.7);
-}
-
-.dark .message-content blockquote {
-  border-left-color: rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .message-link {
@@ -169,39 +158,4 @@
 .message-link.default-link:hover {
   background: rgba(74, 158, 255, 0.1);
   color: #0284c7;
-}
-
-.dark .message-link {
-  color: #60a5fa;
-}
-
-.dark .message-link:hover {
-  background: rgba(96, 165, 250, 0.15);
-}
-
-.dark .message-link.maps-link {
-  color: #60a5fa;
-}
-
-.dark .message-link.maps-link:hover {
-  color: #93c5fd;
-  background: rgba(96, 165, 250, 0.15);
-}
-
-.dark .message-link.usos-link {
-  color: #d8b4fe;
-}
-
-.dark .message-link.usos-link:hover {
-  color: #e9d5ff;
-  background: rgba(168, 85, 247, 0.15);
-}
-
-.dark .message-link.email-link {
-  color: #34d399;
-}
-
-.dark .message-link.email-link:hover {
-  background: rgba(52, 211, 153, 0.15);
-  color: #6ee7b7;
 }
