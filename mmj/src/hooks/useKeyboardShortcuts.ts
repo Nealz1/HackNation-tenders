@@ -5,7 +5,7 @@ interface KeyboardShortcutsConfig {
   onNewChat: () => void;
   onSearch: () => void;
   onToggleSidebar: () => void;
-  onOpenSettings: () => void;
+  onOpenSettings?: () => void;
   onOpenArchives?: () => void;
   onOpenGroups?: () => void;
   onFocusInput?: () => void;
@@ -39,7 +39,7 @@ export const useKeyboardShortcuts = (config: KeyboardShortcutsConfig) => {
         return;
       }
 
-      if (modKey && event.key === ',') {
+      if (modKey && event.key === ',' && config.onOpenSettings) {
         event.preventDefault();
         config.onOpenSettings();
         return;
