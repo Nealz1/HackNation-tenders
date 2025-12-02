@@ -12,8 +12,6 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/c/:sessionId" element={<App />} />
-          <Route path="/g/:groupId" element={<App />} />
-          <Route path="/g/:groupId/c/:sessionId" element={<App />} />
         </Routes>
       </LanguageProvider>
     </BrowserRouter>

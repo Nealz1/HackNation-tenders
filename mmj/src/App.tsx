@@ -25,7 +25,7 @@ import { STORAGE_KEYS } from "./config/constants";
 
 function App() {
   const { sessionId: urlSessionId, groupId: urlGroupId } = useParams<{ sessionId?: string; groupId?: string }>();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.SIDEBAR_OPEN);
     return saved ? JSON.parse(saved) : true;
@@ -111,9 +111,6 @@ function App() {
   const navigate = useNavigate();
 
   const handleNewChat = async () => {
-    // Previously we created a guest session immediately. Restore prior behavior:
-    // navigate to the default page and clear current messages; the guest session
-    // will be created when the user sends their first message in useChatMessages.
     setMessages([]);
     setCurrentSessionId(null);
     navigate('/');
@@ -287,7 +284,6 @@ function App() {
 
       {urlGroupId ? (
         <GroupView
-          language={language}
           onSelectSession={sessionOperations.handleSelectSession}
           onSendMessageInGroup={handleSendMessageInGroup}
           isLoading={isLoading}

@@ -24,7 +24,7 @@ export const SettingsDialog = ({
 }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("general");
   const [emailCopied, setEmailCopied] = useState(false);
-  const { t, language } = useTranslations();
+  const { t } = useTranslations();
   const { accountInfo, updateAccountInfo, resetAccountInfo, getFullEmail } = useAccount(user);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export const SettingsDialog = ({
               <h2 className="settings-title">{t.settings.general}</h2>
 
               <div className="settings-section">
-                <p className="settings-placeholder">{language === 'pl' ? 'Ogólne ustawienia aplikacji' : 'General application settings'}</p>
+                <p className="settings-placeholder">Ogólne ustawienia aplikacji</p>
               </div>
             </>
           )}
@@ -123,7 +123,7 @@ export const SettingsDialog = ({
               <div className="settings-section">
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.name || 'Name'}</span>
+                    <span>Imię</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -131,14 +131,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.firstName}
                       onChange={(e) => updateAccountInfo({ firstName: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź swoje imię' : 'Enter your first name'}
+                      placeholder={'Wprowadź swoje imię'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.surname || 'Surname'}</span>
+                    <span>Nazwisko</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -146,14 +146,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.lastName}
                       onChange={(e) => updateAccountInfo({ lastName: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź swoje nazwisko' : 'Enter your last name'}
+                      placeholder={'Wprowadź swoje nazwisko'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.group || 'Group'}</span>
+                    <span>Grupa</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -161,14 +161,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.groupName}
                       onChange={(e) => updateAccountInfo({ groupName: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź swoją grupę (np. WCY21IL1S0)' : 'Enter your group (e.g. WCY21IL1S0)'}
+                      placeholder={'Wprowadź swoją grupę (np. WCY21IL1S0)'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.studentIndex || 'Student Index'}</span>
+                    <span>Indeks studencki</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -176,14 +176,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.studentIndex}
                       onChange={(e) => updateAccountInfo({ studentIndex: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź swój indeks studencki' : 'Enter your student index number'}
+                      placeholder={'Wprowadź swój indeks studencki'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.phoneNumber || 'Phone Number'}</span>
+                    <span>Numer telefonu</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -191,14 +191,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.phoneNumber}
                       onChange={(e) => updateAccountInfo({ phoneNumber: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź swój numer telefonu' : 'Enter your phone number'}
+                      placeholder={'Wprowadź swój numer telefonu'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.faculty || 'Faculty'}</span>
+                    <span>Wydział</span>
                   </div>
                   <div className="settings-control">
                     <select
@@ -206,7 +206,7 @@ export const SettingsDialog = ({
                       value={accountInfo.faculty}
                       onChange={(e) => updateAccountInfo({ faculty: e.target.value })}
                     >
-                      <option value="">{language === 'pl' ? 'Wybierz wydział' : 'Select faculty'}</option>
+                      <option value="">Wybierz wydział</option>
                       <option value="Wydział Cybernetyki">WCY - Wydział Cybernetyki</option>
                       <option value="Wydział Elektroniki">WEL - Wydział Elektroniki</option>
                       <option value="Wydział Inżynierii Lądowej i Geodezji">WIG - Wydział Inżynierii Lądowej i Geodezji</option>
@@ -221,7 +221,7 @@ export const SettingsDialog = ({
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{language === 'pl' ? 'Poziom Studiów' : 'Study Level'}</span>
+                    <span>Poziom Studiów</span>
                   </div>
                   <div className="settings-control">
                     <select
@@ -229,10 +229,10 @@ export const SettingsDialog = ({
                       value={accountInfo.studyLevel || ""}
                       onChange={(e) => updateAccountInfo({ studyLevel: e.target.value })}
                     >
-                      <option value="">{language === 'pl' ? 'Wybierz poziom studiów' : 'Select study level'}</option>
-                      <option value="I">I - {language === 'pl' ? 'inżynierskie' : 'bachelor\'s'}</option>
-                      <option value="II">II - {language === 'pl' ? 'magisterskie' : 'master\'s'}</option>
-                      <option value="JM">JM - {language === 'pl' ? 'jednolite magisterskie' : 'uniform master\'s'}</option>
+                      <option value="">Wybierz poziom studiów</option>
+                      <option value="I">I - inżynierskie</option>
+                      <option value="II">II - magisterskie</option>
+                      <option value="JM">JM - jednolite magisterskie</option>
                     </select>
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export const SettingsDialog = ({
                         className="settings-input"
                         value={accountInfo.email}
                         onChange={(e) => updateAccountInfo({ email: e.target.value })}
-                        placeholder={language === 'pl' ? 'Wprowadź nazwę użytkownika email' : 'Enter email username'}
+                        placeholder={'Wprowadź nazwę użytkownika email'}
                         style={{ flex: 1 }}
                       />
                       <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
@@ -260,7 +260,7 @@ export const SettingsDialog = ({
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.fullEmail || 'Full Email'}</span>
+                    <span>Pełny email</span>
                   </div>
                   <div className="settings-control">
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -273,7 +273,7 @@ export const SettingsDialog = ({
                         color: 'var(--text-primary)',
                         fontSize: '14px'
                       }}>
-                        {getFullEmail() || (language === 'pl' ? 'Uzupełnij pola email powyżej' : 'Complete email fields above')}
+                        {getFullEmail() || 'Uzupełnij pola email powyżej'}
                       </div>
                       {getFullEmail() && (
                         <button
@@ -292,16 +292,16 @@ export const SettingsDialog = ({
                             fontSize: '14px',
                             fontWeight: '500'
                           }}
-                          title={language === 'pl' ? 'Kopiuj email' : 'Copy email'}
+                          title={'Kopiuj email'}
                         >
                           {emailCopied ? (
                             <>
-                              ✓ {language === 'pl' ? 'Skopiowano!' : 'Copied!'}
+                              ✓ Skopiowano!
                             </>
                           ) : (
                             <>
                               <CopyIcon width={16} height={16} />
-                              {language === 'pl' ? 'Kopiuj' : 'Copy'}
+                              Kopiuj
                             </>
                           )}
                         </button>
@@ -314,11 +314,11 @@ export const SettingsDialog = ({
               <div className="settings-section-divider"></div>
 
               <div className="settings-section">
-                <h3 className="settings-section-title">{language === 'pl' ? 'Adres' : 'Address'}</h3>
+                <h3 className="settings-section-title">Adres</h3>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{language === 'pl' ? 'Ulica' : 'Street'}</span>
+                    <span>Ulica</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -326,14 +326,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.street}
                       onChange={(e) => updateAccountInfo({ street: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź nazwę ulicy' : 'Enter street name'}
+                      placeholder={'Wprowadź nazwę ulicy'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{language === 'pl' ? 'Numer budynku' : 'Building Number'}</span>
+                    <span>Numer budynku</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -341,14 +341,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.buildingNumber}
                       onChange={(e) => updateAccountInfo({ buildingNumber: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź numer budynku' : 'Enter building number'}
+                      placeholder={'Wprowadź numer budynku'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{language === 'pl' ? 'Numer mieszkania' : 'Apartment Number'}</span>
+                    <span>Numer mieszkania</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -356,14 +356,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.apartmentNumber}
                       onChange={(e) => updateAccountInfo({ apartmentNumber: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź numer mieszkania (opcjonalne)' : 'Enter apartment number (optional)'}
+                      placeholder={'Wprowadź numer mieszkania (opcjonalne)'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{language === 'pl' ? 'Kod pocztowy' : 'Postal Code'}</span>
+                    <span>Kod pocztowy</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -371,14 +371,14 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.postalCode}
                       onChange={(e) => updateAccountInfo({ postalCode: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź kod pocztowy' : 'Enter postal code'}
+                      placeholder={'Wprowadź kod pocztowy'}
                     />
                   </div>
                 </div>
 
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{language === 'pl' ? 'Miasto' : 'City'}</span>
+                    <span>Miasto</span>
                   </div>
                   <div className="settings-control">
                     <input
@@ -386,7 +386,7 @@ export const SettingsDialog = ({
                       className="settings-input"
                       value={accountInfo.city}
                       onChange={(e) => updateAccountInfo({ city: e.target.value })}
-                      placeholder={language === 'pl' ? 'Wprowadź miasto' : 'Enter city'}
+                      placeholder={'Wprowadź miasto'}
                     />
                   </div>
                 </div>
@@ -397,7 +397,7 @@ export const SettingsDialog = ({
               <div className="settings-section">
                 <div className="settings-row">
                   <div className="settings-label">
-                    <span>{t.settings.accountFields?.actions || 'Actions'}</span>
+                    <span>Akcje</span>
                   </div>
                   <div className="settings-control">
                     <button
@@ -412,7 +412,7 @@ export const SettingsDialog = ({
                         cursor: 'pointer'
                       }}
                     >
-                      {t.settings.accountFields?.resetAll || 'Reset All Fields'}
+                      {'Zresetuj wszystkie pola'}
                     </button>
                   </div>
                 </div>
@@ -424,7 +424,7 @@ export const SettingsDialog = ({
 
           {activeTab === "shortcuts" && (
             <>
-              <h2 className="settings-title">{language === 'pl' ? 'Skróty klawiszowe' : 'Keyboard shortcuts'}</h2>
+              <h2 className="settings-title">Skróty klawiszowe</h2>
 
               <div className="settings-section">
                 <div className="shortcuts-list">
@@ -436,9 +436,7 @@ export const SettingsDialog = ({
                       <span className="shortcut-plus">+</span>
                       <kbd className="shortcut-key">N</kbd>
                     </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Nowy czat' : 'New chat'}
-                    </span>
+                    <span className="shortcut-description">Nowy czat</span>
                   </div>
 
                   <div className="shortcut-item">
@@ -447,20 +445,7 @@ export const SettingsDialog = ({
                       <span className="shortcut-plus">+</span>
                       <kbd className="shortcut-key">K</kbd>
                     </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Przeszukaj czaty' : 'Search chats'}
-                    </span>
-                  </div>
-
-                  <div className="shortcut-item">
-                    <div className="shortcut-keys">
-                      <kbd className="shortcut-key">{getModifierKey()}</kbd>
-                      <span className="shortcut-plus">+</span>
-                      <kbd className="shortcut-key">I</kbd>
-                    </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Otwórz grupy' : 'Open groups'}
-                    </span>
+                    <span className="shortcut-description">Przeszukaj czaty</span>
                   </div>
 
                   <div className="shortcut-item">
@@ -469,9 +454,7 @@ export const SettingsDialog = ({
                       <span className="shortcut-plus">+</span>
                       <kbd className="shortcut-key">B</kbd>
                     </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Przełącz pasek boczny' : 'Toggle sidebar'}
-                    </span>
+                    <span className="shortcut-description">Przełącz pasek boczny</span>
                   </div>
 
                   <div className="shortcut-item">
@@ -480,40 +463,21 @@ export const SettingsDialog = ({
                       <span className="shortcut-plus">+</span>
                       <kbd className="shortcut-key">,</kbd>
                     </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Otwórz ustawienia' : 'Open settings'}
-                    </span>
-                  </div>
-
-                  <div className="shortcut-item">
-                    <div className="shortcut-keys">
-                      <kbd className="shortcut-key">{getModifierKey()}</kbd>
-                      <span className="shortcut-plus">+</span>
-                      <kbd className="shortcut-key">Shift</kbd>
-                      <span className="shortcut-plus">+</span>
-                      <kbd className="shortcut-key">A</kbd>
-                    </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Otwórz archiwa' : 'Open archives'}
-                    </span>
+                    <span className="shortcut-description">Otwórz ustawienia</span>
                   </div>
 
                   <div className="shortcut-item">
                     <div className="shortcut-keys">
                       <kbd className="shortcut-key">/</kbd>
                     </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Aktywuj pole tekstowe' : 'Focus input'}
-                    </span>
+                    <span className="shortcut-description">Aktywuj pole tekstowe</span>
                   </div>
 
                   <div className="shortcut-item">
                     <div className="shortcut-keys">
                         <kbd className="shortcut-key">{getEscapeKey()}</kbd>
                     </div>
-                    <span className="shortcut-description">
-                      {language === 'pl' ? 'Zamknij dialog / Opuść pole tekstowe' : 'Close dialog / Blur input'}
-                    </span>
+                    <span className="shortcut-description">Zamknij dialog / Opuść pole tekstowe</span>
                   </div>
                 </div>
               </div>

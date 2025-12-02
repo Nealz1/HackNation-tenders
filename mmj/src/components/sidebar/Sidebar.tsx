@@ -536,7 +536,6 @@ export const Sidebar = ({
             >
               <FolderIcon />
               <span>{t.sidebar.groups}</span>
-              <span className="button-shortcut">Ctrl+I</span>
             </button>
           ) : (
             <Tooltip text={t.sidebar.groups} shortcut="Ctrl+I">

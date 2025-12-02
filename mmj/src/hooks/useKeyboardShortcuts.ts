@@ -45,22 +45,6 @@ export const useKeyboardShortcuts = (config: KeyboardShortcutsConfig) => {
         return;
       }
 
-      if (modKey && event.shiftKey && event.key.toLowerCase() === 'a') {
-        event.preventDefault();
-        if (config.onOpenArchives) {
-          config.onOpenArchives();
-        }
-        return;
-      }
-
-      if (modKey && event.key.toLowerCase() === 'i') {
-        event.preventDefault();
-        if (config.onOpenGroups) {
-          config.onOpenGroups();
-        }
-        return;
-      }
-
       if (event.key === '/' && !config.isInputFocused) {
         event.preventDefault();
         if (config.onFocusInput) {

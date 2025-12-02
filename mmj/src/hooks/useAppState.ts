@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { STORAGE_KEYS } from '../config/constants';
-import type { Language } from '../types/common';
 
 export interface AppState {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-  language: Language;
-  setLanguage: (lang: Language) => void;
   currentSessionId: number | string | null;
   setCurrentSessionId: (id: number | string | null) => void;
   isInputFocused: boolean;
@@ -17,11 +14,6 @@ export const useAppState = (): AppState => {
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.SIDEBAR_OPEN);
     return saved ? JSON.parse(saved) : true;
-  });
-
-  const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
-    return (saved === 'pl' || saved === 'en') ? saved : 'en';
   });
 
   const [currentSessionId, setCurrentSessionId] = useState<number | string | null>(() => {
@@ -36,10 +28,6 @@ export const useAppState = (): AppState => {
   }, [sidebarOpen]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.LANGUAGE, language);
-  }, [language]);
-
-  useEffect(() => {
     if (currentSessionId) {
       localStorage.setItem(STORAGE_KEYS.CURRENT_SESSION, String(currentSessionId));
     } else {
@@ -50,8 +38,6 @@ export const useAppState = (): AppState => {
   return {
     sidebarOpen,
     setSidebarOpen,
-    language,
-    setLanguage,
     currentSessionId,
     setCurrentSessionId,
     isInputFocused,

@@ -8,14 +8,13 @@ import { formatRelativeDate } from "../utils/dateUtils";
 import type { Group, ChatSession } from "../types";
 
 interface GroupViewProps {
-  language: "en" | "pl";
   onSelectSession: (sessionId: number) => void;
   onSendMessageInGroup: (message: string, groupId: number) => Promise<void>;
   isLoading: boolean;
   onFocusChange: (focused: boolean) => void;
 }
 
-export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isLoading, onFocusChange }: GroupViewProps) => {
+export const GroupView = ({ onSelectSession, onSendMessageInGroup, isLoading, onFocusChange }: GroupViewProps) => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const [group, setGroup] = useState<Group | null>(null);
@@ -75,7 +74,7 @@ export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isL
     return (
       <div className="group-view">
         <div className="group-view-loading">
-          {language === 'pl' ? 'Ładowanie...' : 'Loading...'}
+          Ładowanie...
         </div>
       </div>
     );
@@ -85,7 +84,7 @@ export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isL
     return (
       <div className="group-view">
         <div className="group-view-error">
-          {language === 'pl' ? 'Grupa nie znaleziona' : 'Group not found'}
+          Grupa nie znaleziona
         </div>
       </div>
     );
@@ -100,7 +99,7 @@ export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isL
         <div className="group-view-title">
           <h1>{group.name}</h1>
           <span className="group-chat-count">
-            {sessions.length} {language === 'pl' ? 'rozmów' : 'chats'}
+            {sessions.length} rozmów
           </span>
         </div>
       </div>
@@ -109,12 +108,8 @@ export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isL
         {sessions.length === 0 ? (
           <div className="group-empty-state">
             <ChatIcon width={48} height={48} />
-            <h2>{language === 'pl' ? 'Brak rozmów w tej grupie' : 'No chats in this group'}</h2>
-            <p>
-              {language === 'pl'
-                ? 'Rozpocznij nową rozmowę poniżej'
-                : 'Start a new conversation below'}
-            </p>
+            <h2>Brak rozmów w tej grupie</h2>
+            <p>Rozpocznij nową rozmowę poniżej</p>
           </div>
         ) : (
           <div className="group-chats-list">
@@ -128,7 +123,7 @@ export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isL
                   <div className="group-chat-item-header">
                     <ChatIcon width={18} height={18} />
                     <h3>{session.title}</h3>
-                    <span className="group-chat-date">{formatRelativeDate(session.updated_at, language)}</span>
+                    <span className="group-chat-date">{formatRelativeDate(session.updated_at, 'pl')}</span>
                   </div>
                   {session.lastMessage && (
                     <p className="group-chat-preview">{session.lastMessage}</p>

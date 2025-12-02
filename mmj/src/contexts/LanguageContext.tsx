@@ -1,10 +1,9 @@
 import { createContext, ReactNode } from 'react';
-import { translations, Language } from '../config/translations';
+import { translations } from '../config/translations';
 
-type TranslationsType = (typeof translations)[Language];
+type TranslationsType = typeof translations.pl;
 
 interface LanguageContextType {
-  language: Language;
   t: TranslationsType;
 }
 
@@ -15,13 +14,9 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
-  const language: Language = 'pl';
-  const t = translations[language] as TranslationsType;
+  const t = translations.pl as TranslationsType;
 
-  const value: LanguageContextType = {
-    language,
-    t
-  };
+  const value: LanguageContextType = { t };
 
   return (
     <LanguageContext.Provider value={value}>

@@ -4,54 +4,40 @@ import "./KeyboardShortcutsDialog.css";
 interface KeyboardShortcutsDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  language: "en" | "pl";
 }
 
 interface Shortcut {
   keys: string[];
-  descriptionEn: string;
   descriptionPl: string;
 }
 
 const shortcuts: Shortcut[] = [
   {
     keys: ["Ctrl", "Shift", "N"],
-    descriptionEn: "New chat",
     descriptionPl: "Nowy czat",
   },
   {
     keys: ["Ctrl", "K"],
-    descriptionEn: "Search chats",
     descriptionPl: "Przeszukaj czaty",
   },
   {
     keys: ["Ctrl", "B"],
-    descriptionEn: "Toggle sidebar",
     descriptionPl: "Przełącz pasek boczny",
   },
   {
     keys: ["Ctrl", ","],
-    descriptionEn: "Open settings",
     descriptionPl: "Otwórz ustawienia",
   },
   {
-    keys: ["Ctrl", "Shift", "A"],
-    descriptionEn: "Open archives",
-    descriptionPl: "Otwórz archiwa",
-  },
-  {
     keys: ["/"],
-    descriptionEn: "Focus input",
     descriptionPl: "Aktywuj pole tekstowe",
   },
   {
     keys: ["Esc"],
-    descriptionEn: "Close dialog / Blur input",
     descriptionPl: "Zamknij dialog / Opuść pole tekstowe",
   },
   {
     keys: ["?"],
-    descriptionEn: "Show keyboard shortcuts",
     descriptionPl: "Pokaż skróty klawiszowe",
   },
 ];
@@ -68,7 +54,6 @@ const formatKey = (key: string): string => {
 export const KeyboardShortcutsDialog = ({
   isOpen,
   onClose,
-  language,
 }: KeyboardShortcutsDialogProps) => {
   if (!isOpen) return null;
 
@@ -77,7 +62,7 @@ export const KeyboardShortcutsDialog = ({
       <div className="keyboard-shortcuts-overlay" onClick={onClose} />
       <div className="keyboard-shortcuts-dialog">
         <div className="keyboard-shortcuts-header">
-          <h2>{language === "pl" ? "Skróty klawiszowe" : "Keyboard shortcuts"}</h2>
+          <h2>Skróty klawiszowe</h2>
           <button className="keyboard-shortcuts-close" onClick={onClose}>
             <CloseIcon width={20} height={20} />
           </button>
@@ -96,7 +81,7 @@ export const KeyboardShortcutsDialog = ({
                 ))}
               </div>
               <div className="keyboard-shortcut-description">
-                {language === "pl" ? shortcut.descriptionPl : shortcut.descriptionEn}
+                {shortcut.descriptionPl}
               </div>
             </div>
           ))}
@@ -105,4 +90,3 @@ export const KeyboardShortcutsDialog = ({
     </>
   );
 };
-

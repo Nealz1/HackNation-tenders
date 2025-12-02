@@ -1,2 +1,0 @@
-export { HelpDialog } from './HelpDialog';
-

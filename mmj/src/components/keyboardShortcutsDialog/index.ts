@@ -1,2 +1,2 @@
-export { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
+// KeyboardShortcutsDialog export removed during cleanup (component retained on disk if needed)
 
