@@ -1,6 +1,6 @@
 import { useDropdownMenu } from "../../hooks/useDropdownMenu";
 import { useLanguage } from "../../hooks/useLanguage";
-import { MenuIcon, DotsVerticalIcon, TrashIcon, DownloadIcon } from "../icons";
+import { DotsVerticalIcon, TrashIcon, DownloadIcon } from "../icons";
 import type { SessionId } from "../../types";
 import "./Header.css";
 
@@ -13,8 +13,8 @@ interface HeaderProps {
 }
 
 export const Header = ({
-  sidebarOpen,
-  onToggleSidebar,
+  sidebarOpen: _sidebarOpen,
+  onToggleSidebar: _onToggleSidebar,
   currentSessionId,
   onDeleteSession,
   onExportPdf
@@ -39,13 +39,7 @@ export const Header = ({
   return (
     <header className="header">
       <div className="header-left">
-        <button
-          className="sidebar-toggle"
-          onClick={onToggleSidebar}
-          title={sidebarOpen ? t.header.closeSidebar : t.header.openSidebar}
-        >
-          <MenuIcon />
-        </button>
+        {/* Sidebar toggle moved into Sidebar component */}
       </div>
 
       <h1 className="title">{t.header.title}</h1>

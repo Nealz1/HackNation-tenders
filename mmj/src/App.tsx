@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./App.css";
 import { dispatchCustomEvent } from "./utils/eventUtils";
 import { Sidebar } from "./components/sidebar";
@@ -8,14 +8,10 @@ import { ChatContainer } from "./components/chatContainer";
 import { MessageInput } from "./components/messageInput";
 import { SettingsDialog } from "./components/settingsDialog";
 import { DeleteDialog } from "./components/deleteDialog";
-// import { ArchivesDialog } from "./components/archivesDialog"; // Removed Archive functionality
-
 import { ErrorBanner } from "./components/errorBanner";
-
 import { SearchDialog } from "./components/searchDialog";
 import { GroupsDialog } from "./components/groupsDialog";
 import { GroupView } from "./pages/GroupView";
-
 import { useLanguage } from "./hooks/useLanguage";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useChatHistory } from "./hooks/useChatHistory";
@@ -112,8 +108,19 @@ function App() {
     () => setChatNotFoundError(true)
   );
 
+  const navigate = useNavigate();
+
+  const handleNewChat = async () => {
+    // Previously we created a guest session immediately. Restore prior behavior:
+    // navigate to the default page and clear current messages; the guest session
+    // will be created when the user sends their first message in useChatMessages.
+    setMessages([]);
+    setCurrentSessionId(null);
+    navigate('/');
+  };
+
   useKeyboardShortcuts({
-    onNewChat: sessionOperations.handleNewChat,
+    onNewChat: handleNewChat,
     onSearch: () => setSearchDialogOpen(true),
     onToggleSidebar: () => setSidebarOpen(!sidebarOpen),
     onOpenSettings: () => setSettingsOpen(true),
@@ -264,7 +271,7 @@ function App() {
         onOpenGroups={() => handleOpenGroups()}
         sessions={sessions}
         currentSessionId={currentSessionId}
-        onNewChat={sessionOperations.handleNewChat}
+        onNewChat={handleNewChat}
         onSelectSession={sessionOperations.handleSelectSession}
         onDeleteSession={handleDeleteSession}
         onExportPdf={handleExportPdf}
@@ -306,14 +313,13 @@ function App() {
           isLoading={isLoading}
         />
 
-        {(urlSessionId || messages.some(msg => msg.sender === "user")) && (
-          <MessageInput
-            onSendMessage={handleSendMessage}
-            onFocusChange={setIsInputFocused}
-            isLoading={isLoading}
-            onCancel={cancelMessage}
-          />
-        )}
+        {/* Always show input in main view so New Chat shows the input immediately */}
+        <MessageInput
+          onSendMessage={handleSendMessage}
+          onFocusChange={setIsInputFocused}
+          isLoading={isLoading}
+          onCancel={cancelMessage}
+        />
         </main>
       )}
 

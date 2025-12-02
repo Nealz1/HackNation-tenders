@@ -26,13 +26,13 @@ export const translations = {
       cancel: "Anuluj",
     },
     header: {
-      title: "Asystent WAT",
+      title: "SourceMate",
       openSidebar: "Otwórz panel",
       closeSidebar: "Zamknij panel",
       moreOptions: "Więcej opcji",
     },
     chat: {
-      placeholder: "Wiadomość do Asystenta WAT...",
+      placeholder: "Wiadomość do SourceMate...",
       serverError: "❌ Błąd serwera!",
       requestCancelled: "⏹️ Żądanie anulowane.",
       formGenerated: "📄 Wygenerowano formularz",
@@ -74,7 +74,6 @@ export const translations = {
     },
     help: {
       title: "Co Potrafię?",
-      intro: "Jestem Twoim asystentem studenckim WAT. Oto w czym mogę Ci pomóc:",
       schedules: "Plany Zajęć",
       schedulesDesc: "Sprawdź plan dla dowolnej grupy, zobacz zajęcia na dziś lub konkretną datę",
       contacts: "Informacje Kontaktowe",

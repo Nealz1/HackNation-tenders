@@ -92,9 +92,7 @@ export interface ChatContainerProps {
 }
 
 export const ChatContainer = ({
-  messages,
-  onSendMessage,
-  onEditMessage,
+  messages, onEditMessage,
   onNavigateVersion,
   urlSessionId,
   isLoading

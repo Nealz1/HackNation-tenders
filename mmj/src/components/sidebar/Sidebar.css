@@ -32,6 +32,23 @@
   padding: 8px 4px;
 }
 
+.sidebar-title .sidebar-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.sidebar-title .sidebar-toggle:hover {
+  background: var(--hover-bg);
+}
+
 .sidebar.closed .sidebar-title {
   justify-content: center;
   padding: 8px 0;
@@ -54,6 +71,7 @@
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
+  margin-left: 4px;
 }
 
 .new-chat-btn {

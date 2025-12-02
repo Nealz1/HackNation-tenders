@@ -16,7 +16,8 @@ import {
   LogoutIcon,
   LoginIcon,
   EditIcon,
-  DownloadIcon
+  DownloadIcon,
+  MenuIcon
 } from "../icons";
 import type { User, ChatSession, Group } from "../../types";
 import { useState } from "react";
@@ -426,8 +427,9 @@ export const Sidebar = ({
   currentGroupId,
   onSelectGroup,
   groupSessions = {},
-  onLoadGroupSessions
-}: SidebarProps & { onOpenHelp?: () => void }) => {
+  onLoadGroupSessions,
+  onToggleSidebar
+}: SidebarProps & { onOpenHelp?: () => void, onToggleSidebar?: () => void }) => {
   const userMenu = useDropdownMenu();
   const { t } = useTranslations();
   const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
@@ -479,6 +481,15 @@ export const Sidebar = ({
     <aside className={`sidebar ${sidebarOpen ? '' : 'closed'}`}>
       <div className="sidebar-header">
         <div className="sidebar-title">
+          {/* menu toggle to the left of title */}
+          <button
+            className="sidebar-toggle"
+            onClick={() => onToggleSidebar && onToggleSidebar()}
+            title={sidebarOpen ? 'Zamknij panel' : 'Otwórz panel'}
+          >
+            <MenuIcon />
+          </button>
+
           {/* removed background logo per request */}
           {sidebarOpen && <h2>DataServe</h2>}
         </div>

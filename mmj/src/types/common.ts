@@ -1,8 +1,6 @@
 export type SessionId = number | string;
 
-export type Language = "en" | "pl";
-
-
+export type Language = "pl";
 
 export interface BaseDialogProps {
   isOpen: boolean;
