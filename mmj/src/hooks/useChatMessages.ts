@@ -2,20 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Message, ChatSession } from '../types';
 import { API_BASE_URL, STORAGE_KEYS, CONTENT_TYPES } from '../config/constants';
-import { handleDocumentResponse, handleHtmlResponse, handleEmailUrlResponse } from '../utils/responseHandlers';
+import { handleHtmlResponse, handleEmailUrlResponse } from '../utils/responseHandlers';
 import { guestChatService } from '../services/guestChatService';
 import { chatHistoryService } from '../services/chatHistoryService';
-
-const downloadFile = async (blob: Blob, filename: string) => {
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.URL.revokeObjectURL(url);
-};
 
 export const useChatMessages = (
   currentSessionId: number | string | null,
@@ -68,11 +57,7 @@ export const useChatMessages = (
 
       const contentType = res.headers.get("content-type");
 
-      if (contentType?.includes(CONTENT_TYPES.WORD_DOCUMENT)) {
-        await handleDocumentResponse(res, setMessages, downloadFile, t.chat.formGenerated);
-        return null;
-      }
-      else if (contentType?.includes(CONTENT_TYPES.HTML)) {
+      if (contentType?.includes(CONTENT_TYPES.HTML)) {
         await handleHtmlResponse(res, setMessages, t.chat.routeGenerated);
         return null;
       }
@@ -85,24 +70,6 @@ export const useChatMessages = (
         } else {
           const botMsg: Message = { sender: "bot", text: data.response };
           setMessages((prev) => [...prev, botMsg]);
-
-          // Handle file download metadata
-          if (data.file_download && data.file_download.filename) {
-            const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-            if (token) {
-              try {
-                const downloadRes = await fetch(`${API_BASE_URL}/download/form/${encodeURIComponent(data.file_download.filename)}`, {
-                  headers: { Authorization: `Bearer ${token}` }
-                });
-                if (downloadRes.ok) {
-                  const blob = await downloadRes.blob();
-                  await downloadFile(blob, data.file_download.filename);
-                }
-              } catch (err) {
-                console.error('Failed to download form:', err);
-              }
-            }
-          }
 
           if (data.open_url) {
             window.open(data.open_url, '_blank');
