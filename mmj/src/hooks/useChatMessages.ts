@@ -3,9 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import type { Message, ChatSession } from '../types';
 import { API_BASE_URL, STORAGE_KEYS, CONTENT_TYPES } from '../config/constants';
 import { handleDocumentResponse, handleHtmlResponse, handleEmailUrlResponse } from '../utils/responseHandlers';
-import { downloadFile } from '../utils/sessionHelpers';
 import { guestChatService } from '../services/guestChatService';
 import { chatHistoryService } from '../services/chatHistoryService';
+
+const downloadFile = async (blob: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+};
 
 export const useChatMessages = (
   currentSessionId: number | string | null,

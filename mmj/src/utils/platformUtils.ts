@@ -9,4 +9,3 @@ export const getModifierKey = (): string => {
 export const getEscapeKey = (): string => {
   return isMacPlatform() ? '⎋' : 'Esc';
 };
-
