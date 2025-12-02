@@ -8,15 +8,12 @@ import { guestChatService } from '../services/guestChatService';
 import { chatHistoryService } from '../services/chatHistoryService';
 
 export const useChatMessages = (
-  welcomeMessage: string,
   currentSessionId: number | string | null,
   refreshSessions: () => Promise<void>,
   sessions?: ChatSession[]
 ) => {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>([
-    { sender: "bot", text: welcomeMessage }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -26,15 +23,6 @@ export const useChatMessages = (
       guestChatService.updateSession(currentSessionId, messages);
     }
   }, [messages, currentSessionId]);
-
-  useEffect(() => {
-    setMessages((prev) => {
-      if (prev.length === 1 && prev[0].sender === "bot") {
-        return [{ sender: "bot", text: welcomeMessage }];
-      }
-      return prev;
-    });
-  }, [welcomeMessage]);
 
   const sendMessage = async (message: string, t: { chat: Record<string,string> }, setCurrentSessionId: (id: number | string | null) => void): Promise<{ session_id?: number } | null> => {
     const userMsg: Message = { sender: "user", text: message };
@@ -47,7 +35,7 @@ export const useChatMessages = (
       const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 
       if (!token && !currentSessionId) {
-        const newGuestSessionId = guestChatService.createSession(welcomeMessage);
+        const newGuestSessionId = guestChatService.createSession();
         setCurrentSessionId(newGuestSessionId);
         await refreshSessions();
         navigate(`/c/${newGuestSessionId}`, { replace: true });

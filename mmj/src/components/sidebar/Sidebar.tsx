@@ -16,7 +16,6 @@ import {
   LogoutIcon,
   LoginIcon,
   EditIcon,
-  PinIcon,
   DownloadIcon
 } from "../icons";
 import type { User, ChatSession, Group } from "../../types";
@@ -37,7 +36,6 @@ interface SidebarProps {
   onSelectSession: (sessionId: number | string) => void;
   onDeleteSession: (sessionId: number | string) => void;
   onRenameSession?: (sessionId: number | string, newTitle: string) => void;
-  onPinSession?: (sessionId: number | string) => void;
   onExportPdf?: (sessionId: number | string) => void;
   onMoveToGroup?: (sessionId: number | string) => void;
   onUngroupSession?: (sessionId: number | string) => void;
@@ -55,7 +53,6 @@ const ChatHistoryItem = ({
   onSelect,
   onDelete,
   onRename,
-  onPin,
   onExport,
   onMoveToGroup,
   onUngroup,
@@ -68,7 +65,6 @@ const ChatHistoryItem = ({
   onSelect: () => void;
   onDelete: () => void;
   onRename?: (newTitle: string) => void;
-  onPin?: () => void;
   onExport?: () => void;
   onMoveToGroup?: (sessionId: number | string) => void;
   onUngroup?: () => void;
@@ -105,10 +101,9 @@ const ChatHistoryItem = ({
 
   return (
     <div
-      className={`chat-history-item ${isActive ? 'active' : ''} ${session.is_pinned ? 'pinned' : ''}`}
+      className={`chat-history-item ${isActive ? 'active' : ''}`}
       onClick={() => !isRenaming && onSelect()}
     >
-      {session.is_pinned && <PinIcon width={14} height={14} className="pin-indicator" />}
       <ChatIcon />
       {isRenaming ? (
         <input
@@ -193,19 +188,7 @@ const ChatHistoryItem = ({
                 )}
               </>
             )}
-            {onPin && (
-              <button
-                className="chat-dropdown-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPin();
-                  chatMenu.close();
-                }}
-              >
-                <PinIcon />
-                {session.is_pinned ? t.sidebar.unpin : t.sidebar.pin}
-              </button>
-            )}
+
             {onExport && (
               <button
                 className="chat-dropdown-item"
@@ -244,7 +227,6 @@ const GroupPreviewChatItem = ({
   onSelectSession,
   onRenameSession,
   onMoveToGroup,
-  onPinSession,
   onExportPdf,
   onDeleteSession,
   t,
@@ -254,7 +236,6 @@ const GroupPreviewChatItem = ({
   onSelectSession: (id: number | string) => void;
   onRenameSession?: (sessionId: number | string, currentTitle: string) => void;
   onMoveToGroup?: (sessionId: number | string) => void;
-  onPinSession?: (sessionId: number | string) => void;
   onExportPdf?: (sessionId: number | string) => void;
   onDeleteSession: (sessionId: number | string) => void;
   t: any;
@@ -306,19 +287,7 @@ const GroupPreviewChatItem = ({
                 {t.sidebar.moveToGroup}
               </button>
             )}
-            {onPinSession && (
-              <button
-                className="chat-dropdown-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPinSession(session.id);
-                  chatMenu.close();
-                }}
-              >
-                <PinIcon />
-                {session.is_pinned ? t.sidebar.unpin : t.sidebar.pin}
-              </button>
-            )}
+
             {onExportPdf && (
               <button
                 className="chat-dropdown-item"
@@ -362,7 +331,6 @@ const GroupItem = ({
   onSelectSession,
   onRenameSession,
   onMoveToGroup,
-  onPinSession,
   onExportPdf,
   onDeleteSession,
   t,
@@ -377,7 +345,6 @@ const GroupItem = ({
   onSelectSession: (sessionId: number | string) => void;
   onRenameSession?: (sessionId: number | string, currentTitle: string) => void;
   onMoveToGroup?: (sessionId: number | string) => void;
-  onPinSession?: (sessionId: number | string) => void;
   onExportPdf?: (sessionId: number | string) => void;
   onDeleteSession: (sessionId: number | string) => void;
   onLoadGroupSessions?: (groupId: number) => Promise<ChatSession[]>;
@@ -422,9 +389,7 @@ const GroupItem = ({
               onSelectSession={onSelectSession}
               onRenameSession={onRenameSession}
               onMoveToGroup={onMoveToGroup}
-              onPinSession={onPinSession}
               onExportPdf={onExportPdf}
-
               onDeleteSession={onDeleteSession}
               t={t}
             />
@@ -454,14 +419,13 @@ export const Sidebar = ({
   onSelectSession,
   onDeleteSession,
   onRenameSession,
-  onPinSession,
   onExportPdf,
   onMoveToGroup,
   onUngroupSession,
   groups,
   currentGroupId,
   onSelectGroup,
-                            groupSessions = {},
+  groupSessions = {},
   onLoadGroupSessions
 }: SidebarProps & { onOpenHelp?: () => void }) => {
   const userMenu = useDropdownMenu();
@@ -515,12 +479,8 @@ export const Sidebar = ({
     <aside className={`sidebar ${sidebarOpen ? '' : 'closed'}`}>
       <div className="sidebar-header">
         <div className="sidebar-title">
-          <img
-            src="/watlight.svg"
-            alt="WAT"
-            className="sidebar-logo"
-          />
-          {sidebarOpen && <h2>DataServer</h2>}
+          {/* removed background logo per request */}
+          {sidebarOpen && <h2>DataServe</h2>}
         </div>
 
         {sidebarOpen ? (
@@ -596,7 +556,6 @@ export const Sidebar = ({
               onSelectSession={onSelectSession}
               onRenameSession={onRenameSession}
               onMoveToGroup={onMoveToGroup}
-              onPinSession={onPinSession}
               onExportPdf={onExportPdf}
               onDeleteSession={onDeleteSession}
               onLoadGroupSessions={onLoadGroupSessions}
@@ -628,7 +587,6 @@ export const Sidebar = ({
                   onSelect={() => onSelectSession(session.id)}
                   onDelete={() => onDeleteSession(session.id)}
                   onRename={(newTitle) => onRenameSession?.(session.id, newTitle)}
-                  onPin={() => onPinSession?.(session.id)}
                   onExport={() => onExportPdf?.(session.id)}
                   onMoveToGroup={() => onMoveToGroup?.(session.id)}
                   onUngroup={() => onUngroupSession?.(session.id)}

@@ -42,6 +42,12 @@
   min-height: 24px;
 }
 
+/* make sure message-input class is explicitly styled */
+.message-input {
+  color: var(--text-primary) !important;
+  background: transparent !important;
+}
+
 .input-wrapper textarea::placeholder {
   color: var(--text-secondary);
 }
@@ -175,6 +181,17 @@
   width: 20px;
   height: 20px;
   object-fit: contain;
+}
+
+.message-text {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  line-height: 1.5;
+  font-size: 15px;
+  color: var(--text-primary) !important;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 

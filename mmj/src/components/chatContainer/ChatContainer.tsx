@@ -1,12 +1,9 @@
 import { useState, memo, useEffect, useRef } from "react";
 import "./ChatContainer.css";
-import { useLanguage } from "../../hooks/useLanguage";
-import { MessageInput } from "../messageInput";
 import { MessageContent } from "../messageContent/MessageContent";
-import { CopyIcon, EditIcon, SpeakerIcon } from "../icons";
+import { CopyIcon, EditIcon } from "../icons";
 import type { Message } from "../../types";
 import { UI_FEEDBACK_DURATIONS } from "../../config/constants";
-import { speak } from "../../utils/speech";
 
 
 interface VersionNavigatorProps {
@@ -57,16 +54,8 @@ const MessageActions = memo(({
   messageType,
   copiedIndex,
   onCopy,
-  onEdit,
-  messageNodeId
+  onEdit
 }: MessageActionsProps) => {
-  const { language } = useLanguage();
-
-  const handleTTS = () => {
-    const messageId = messageNodeId ? String(messageNodeId) : `${messageIndex}-${messageText.substring(0, 20)}`;
-    speak(messageText, language as 'pl' | 'en', messageId);
-  };
-
   return (
     <div className="message-actions">
       <button
@@ -84,17 +73,6 @@ const MessageActions = memo(({
         >
           <EditIcon width={14} height={14} />
         </button>
-      )}
-      {messageType === 'bot' && (
-        <>
-          <button
-            className="message-action-btn"
-            onClick={handleTTS}
-            title="Speak"
-          >
-            <SpeakerIcon width={14} height={14} />
-          </button>
-        </>
       )}
     </div>
   );
@@ -121,14 +99,10 @@ export const ChatContainer = ({
   urlSessionId,
   isLoading
 }: ChatContainerProps) => {
-  const { t } = useLanguage();
-  const welcomeMessage = t.chat.welcomeMessage;
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editContent, setEditContent] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const hasUserMessages = messages.some(msg => msg.sender === "user");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -175,27 +149,10 @@ export const ChatContainer = ({
     }
   };
 
-  if (!urlSessionId && !hasUserMessages) {
-    return (
-      <div className="chat-container light">
-        <div className="welcome-screen">
-          <h1 className="welcome-title">{welcomeMessage}</h1>
-          <div className="welcome-input-wrapper">
-            <MessageInput onSendMessage={onSendMessage} />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="chat-container light">
       <div className="chat-messages">
         {messages.map((msg, i) => {
-          if (i === 0 && msg.sender === "bot" && msg.text === welcomeMessage) {
-            return null;
-          }
-
           const hasVersions = msg.siblingCount && msg.siblingCount > 1;
           const isEditing = editingIndex === i;
 

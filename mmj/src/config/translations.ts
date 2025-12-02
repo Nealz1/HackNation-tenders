@@ -32,7 +32,6 @@ export const translations = {
       moreOptions: "Więcej opcji",
     },
     chat: {
-      welcomeMessage: "Cześć! Jestem asystentem studenckim WAT z sekcji AI KZC. Jak mogę Ci pomóc dzisiaj?",
       placeholder: "Wiadomość do Asystenta WAT...",
       serverError: "❌ Błąd serwera!",
       requestCancelled: "⏹️ Żądanie anulowane.",

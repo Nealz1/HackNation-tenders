@@ -33,12 +33,12 @@ class GuestChatService {
     return sessions.find(s => s.id === sessionId) || null;
   }
 
-  createSession(welcomeMessage: string): string {
+  createSession(): string {
     const sessions = this.getGuestSessions();
     const newSession: GuestChatSession = {
       id: `guest-${Date.now()}`,
       title: 'New chat',
-      messages: [{ sender: 'bot', text: welcomeMessage }],
+      messages: [],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -85,4 +85,3 @@ class GuestChatService {
 }
 
 export const guestChatService = new GuestChatService();
-

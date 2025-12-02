@@ -39,7 +39,6 @@ export interface ChatSession {
   created_at: string;
   updated_at: string;
   is_archived: boolean;
-  is_pinned?: boolean;
   is_in_group?: boolean;
   user_id?: string;
   lastMessage?: string;

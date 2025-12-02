@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./GroupView.css";
 import { ChatIcon, ArrowLeftIcon } from "../components/icons";
-import { BackgroundLogo } from "../components/backgroundLogo";
 import { MessageInput } from "../components/messageInput";
 import { groupsService } from "../services/groupsService";
 import { formatRelativeDate } from "../utils/dateUtils";
@@ -94,8 +93,6 @@ export const GroupView = ({ language, onSelectSession, onSendMessageInGroup, isL
 
   return (
     <div className="group-view light">
-      <BackgroundLogo />
-      
       <div className="group-view-header">
         <button className="group-back-btn" onClick={handleBack}>
           <ArrowLeftIcon />

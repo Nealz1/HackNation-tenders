@@ -136,25 +136,6 @@ export const useChatHistory = (isLoggedIn: boolean) => {
     return success;
   };
 
-  const pinSession = async (sessionId: number | string, isPinned: boolean) => {
-    if (!isLoggedIn && typeof sessionId === 'string') {
-      const pinnedSessions = JSON.parse(localStorage.getItem('pinned_sessions') || '{}');
-      if (isPinned) {
-        pinnedSessions[sessionId] = true;
-      } else {
-        delete pinnedSessions[sessionId];
-      }
-      localStorage.setItem('pinned_sessions', JSON.stringify(pinnedSessions));
-      await loadSessions();
-      return true;
-    }
-    const success = await chatHistoryService.pinSession(sessionId as number, isPinned);
-    if (success) {
-      await loadSessions();
-    }
-    return success;
-  };
-
   return {
     sessions,
     archivedSessions,
@@ -167,7 +148,6 @@ export const useChatHistory = (isLoggedIn: boolean) => {
     unarchiveSession,
     deleteSession,
     updateSessionTitle,
-    pinSession,
     refreshSessions: loadSessions,
     refreshArchivedSessions: loadArchivedSessions,
   };

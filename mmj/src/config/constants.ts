@@ -21,16 +21,6 @@ export const UI_FEEDBACK_DURATIONS = {
   TOAST_MESSAGE: 3000,
 } as const;
 
-export const AUTOCOMPLETE_CONSTANTS = {
-  MIN_GROUP_LENGTH: 3,
-  BLUR_DELAY: 150,
-  CURSOR_ADJUSTMENT_DELAY: 0,
-} as const;
-
-export const ACCOUNT_CONSTANTS = {
-  STORAGE_KEY: 'userAccount',
-} as const;
-
 export const EMAIL_DOMAINS = {
   STUDENT_ACTIVE: '@student.wat.edu.pl',
   STAFF: '@wat.edu.pl',

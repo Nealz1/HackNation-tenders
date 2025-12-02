@@ -1,2 +1,0 @@
-export { BackgroundLogo } from "./BackgroundLogo";
-

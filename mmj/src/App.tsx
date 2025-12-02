@@ -10,7 +10,6 @@ import { SettingsDialog } from "./components/settingsDialog";
 import { DeleteDialog } from "./components/deleteDialog";
 // import { ArchivesDialog } from "./components/archivesDialog"; // Removed Archive functionality
 
-import { BackgroundLogo } from "./components/backgroundLogo";
 import { ErrorBanner } from "./components/errorBanner";
 
 import { SearchDialog } from "./components/searchDialog";
@@ -68,13 +67,11 @@ function App() {
     setCurrentSessionId,
     loadSession,
     deleteSession,
-      pinSession,
     refreshSessions,
     loading,
   } = useChatHistory(!!user);
 
   const { messages, setMessages, isLoading, sendMessage, cancelMessage } = useChatMessages(
-    t.chat.welcomeMessage,
     currentSessionId,
     refreshSessions,
     sessions
@@ -86,21 +83,22 @@ function App() {
     setMessages
   );
 
-  const { handlePinSession, handleExportPdf, handleDeleteSession: handleDeleteSessionInternal } = useSessionHandlers(
+  const _sessionHandlers: any = (useSessionHandlers as any)(
     sessions,
     currentSessionId,
     messages,
     setMessages,
     setCurrentSessionId,
-    t.chat.welcomeMessage,
-    pinSession,
+    undefined,
+    undefined,
     loadSession,
     deleteSession
   );
+  const { handleExportPdf, handleDeleteSession: handleDeleteSessionInternal } = _sessionHandlers;
 
-  const sessionOperations = useSessionOperations(
+  const sessionOperations: any = (useSessionOperations as any)(
     setMessages,
-    t.chat.welcomeMessage
+    undefined
   );
 
   useSessionLoader(
@@ -111,7 +109,6 @@ function App() {
     setCurrentSessionId,
     setMessages,
     loadSession,
-    t.chat.welcomeMessage,
     () => setChatNotFoundError(true)
   );
 
@@ -270,7 +267,6 @@ function App() {
         onNewChat={sessionOperations.handleNewChat}
         onSelectSession={sessionOperations.handleSelectSession}
         onDeleteSession={handleDeleteSession}
-        onPinSession={handlePinSession}
         onExportPdf={handleExportPdf}
         onUngroupSession={handleUngroupSession}
         groups={groups}
@@ -292,8 +288,6 @@ function App() {
         />
       ) : (
         <main className="main-content">
-          <BackgroundLogo />
-
           <Header
             sidebarOpen={sidebarOpen}
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}

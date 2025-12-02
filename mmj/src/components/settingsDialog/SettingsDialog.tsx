@@ -4,7 +4,6 @@ import { CloseIcon, CopyIcon } from "../icons";
 import { useTranslations } from "../../hooks/useTranslations";
 import { useAccount } from "../../hooks/useAccount";
 import { getModifierKey, getEscapeKey } from "../../utils/platformUtils";
-import { GroupAutocomplete } from "../groupAutocomplete";
 
 interface SettingsDialogProps {
   isOpen: boolean;
@@ -157,11 +156,12 @@ export const SettingsDialog = ({
                     <span>{t.settings.accountFields?.group || 'Group'}</span>
                   </div>
                   <div className="settings-control">
-                    <GroupAutocomplete
-                      value={accountInfo.groupName}
-                      onChange={(value) => updateAccountInfo({ groupName: value })}
-                      placeholder={language === 'pl' ? 'Wprowadź swoją grupę (np. WCY21IL1S0)' : 'Enter your group (e.g. WCY21IL1S0)'}
+                    <input
+                      type="text"
                       className="settings-input"
+                      value={accountInfo.groupName}
+                      onChange={(e) => updateAccountInfo({ groupName: e.target.value })}
+                      placeholder={language === 'pl' ? 'Wprowadź swoją grupę (np. WCY21IL1S0)' : 'Enter your group (e.g. WCY21IL1S0)'}
                     />
                   </div>
                 </div>

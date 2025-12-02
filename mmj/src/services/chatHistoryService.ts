@@ -136,27 +136,6 @@ class ChatHistoryService {
     }
   }
 
-  async pinSession(sessionId: number, isPinned: boolean): Promise<boolean> {
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/chat/sessions/${sessionId}/pin`,
-        {
-          method: 'PUT',
-          headers: {
-            ...this.getAuthHeaders(),
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ is_pinned: isPinned }),
-        }
-      );
-
-      return response.ok;
-    } catch (error) {
-      console.error('Error pinning/unpinning session:', error);
-      return false;
-    }
-  }
-
   // ==================== MESSAGE BRANCHING METHODS ====================
 
   async getConversationTree(sessionId: number): Promise<any[]> {

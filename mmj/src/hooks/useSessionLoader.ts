@@ -11,7 +11,6 @@ export const useSessionLoader = (
   setCurrentSessionId: React.Dispatch<React.SetStateAction<number | string | null>>,
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   loadSession: (sessionId: number | string) => Promise<any[]>,
-  welcomeMessage: string,
   onSessionNotFound?: () => void
 ) => {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ export const useSessionLoader = (
         loadedSessionIdRef.current = urlSessionId;
       } else {
         setCurrentSessionId(null);
-        setMessages([{ sender: "bot", text: welcomeMessage }]);
+        setMessages([]);
         navigate('/', { replace: true });
         loadedSessionIdRef.current = null;
         if (onSessionNotFound) {
@@ -77,14 +76,14 @@ export const useSessionLoader = (
               }));
               setMessages(formattedMessages);
             } else {
-              setMessages([{ sender: "bot", text: welcomeMessage }]);
+              setMessages([]);
             }
             loadedSessionIdRef.current = sessionIdFromUrl;
           })
           .catch((error) => {
             console.error('Failed to load session:', error);
             setCurrentSessionId(null);
-            setMessages([{ sender: "bot", text: welcomeMessage }]);
+            setMessages([]);
             navigate('/', { replace: true });
             loadedSessionIdRef.current = null;
 
@@ -98,7 +97,7 @@ export const useSessionLoader = (
       if (currentSessionId !== null) {
         setCurrentSessionId(null);
       }
-      setMessages([{ sender: "bot", text: welcomeMessage }]);
+      setMessages([]);
       loadedSessionIdRef.current = null;
     }
   }, [urlSessionId, user, loading]);

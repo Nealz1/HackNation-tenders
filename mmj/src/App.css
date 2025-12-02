@@ -26,6 +26,9 @@ button:focus-visible {
 
 :root {
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  --accent-color: #4A9EFF;
+  --sidebar-hover: #f0f0f0;
+  --error-color: #ef4444;
 }
 
 html, body, #root {
@@ -43,12 +46,17 @@ html, body, #root {
   --text-primary: #000000;
   --text-secondary: #676767;
   --hover-bg: #f0f0f0;
-  --input-bg: #ffffff;
+  --input-bg: #fbfbfc; /* slight off-white to contrast against page bg */
   --input-border: #d9d9e3;
   --btn-primary: #19c37d;
   --btn-primary-hover: #14a869;
   --message-user-bg: #f4f4f4;
-  --message-bot-bg: transparent;
+  --message-bot-bg: #f6f8fa; /* non-transparent so bubbles are visible on plain backgrounds */
+
+  /* defaults for other referenced vars */
+  --accent-color: #4A9EFF;
+  --sidebar-hover: var(--hover-bg);
+  --error-color: #ef4444;
 }
 
 
