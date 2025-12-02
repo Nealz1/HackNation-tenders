@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./App.css";
-import { dispatchCustomEvent } from "./utils/eventUtils";
 import { Sidebar } from "./components/sidebar";
 import { Header } from "./components/header";
 import { ChatContainer } from "./components/chatContainer";
 import { MessageInput } from "./components/messageInput";
-import { SettingsDialog } from "./components/settingsDialog";
 import { DeleteDialog } from "./components/deleteDialog";
 import { ErrorBanner } from "./components/errorBanner";
 import { SearchDialog } from "./components/searchDialog";
-import { GroupsDialog } from "./components/groupsDialog";
-import { GroupView } from "./pages/GroupView";
 import { useLanguage } from "./hooks/useLanguage";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useChatHistory } from "./hooks/useChatHistory";
@@ -20,42 +16,25 @@ import { useSessionOperations } from "./hooks/useSessionOperations";
 import { useSessionLoader } from "./hooks/useSessionLoader";
 import { useMessageHandlers } from "./hooks/useMessageHandlers";
 import { useSessionHandlers } from "./hooks/useSessionHandlers";
-import { useGroups } from "./hooks/useGroups";
 import { STORAGE_KEYS } from "./config/constants";
 
 function App() {
-  const { sessionId: urlSessionId, groupId: urlGroupId } = useParams<{ sessionId?: string; groupId?: string }>();
+  const { sessionId: urlSessionId } = useParams<{ sessionId?: string }>();
   const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.SIDEBAR_OPEN);
     return saved ? JSON.parse(saved) : true;
   });
 
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [groupDeleteDialogOpen, setGroupDeleteDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<number | string | null>(null);
-  const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
   const [chatNotFoundError, setChatNotFoundError] = useState(false);
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
-  const [groupsOpen, setGroupsOpen] = useState(false);
-  const [groupsSelectMode, setGroupsSelectMode] = useState(false);
-  const [groupsSelectedSessionId, setGroupsSelectedSessionId] = useState<number | string | null>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
 
   const user = null;
   const handleLogin = () => {};
   const handleLogout = () => {};
-
-  const {
-    groups,
-    createGroup,
-    deleteGroup,
-    loadGroupSessions,
-    addSessionToGroup,
-    ungroupSession,
-    groupSessions,
-  } = useGroups(!!user);
 
   const {
     sessions,
@@ -120,7 +99,6 @@ function App() {
     onNewChat: handleNewChat,
     onSearch: () => setSearchDialogOpen(true),
     onToggleSidebar: () => setSidebarOpen(!sidebarOpen),
-    onOpenSettings: () => setSettingsOpen(true),
     onFocusInput: () => {
       const input = document.querySelector<HTMLInputElement>('.message-input');
       input?.focus();
@@ -128,24 +106,7 @@ function App() {
     isInputFocused,
   });
 
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === '?' && !isInputFocused) {
-        const activeElement = document.activeElement;
-        const isInInput = activeElement instanceof HTMLInputElement ||
-                         activeElement instanceof HTMLTextAreaElement ||
-                         activeElement?.hasAttribute('contenteditable');
 
-        if (!isInInput) {
-          e.preventDefault();
-          setSettingsOpen(true);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isInputFocused]);
 
   useEffect(() => {
     if (currentSessionId) {
@@ -174,85 +135,8 @@ function App() {
     }
   };
 
-  const handleDeleteGroup = (groupId: number) => {
-    setGroupToDelete(String(groupId));
-    setGroupDeleteDialogOpen(true);
-  };
-
-  const confirmDeleteGroup = async () => {
-    if (groupToDelete !== null) {
-      const groupIdToDelete = parseInt(groupToDelete);
-      await deleteGroup(groupIdToDelete);
-      await refreshSessions();
-
-      dispatchCustomEvent('groupDeleted', { groupId: groupIdToDelete });
-
-      setGroupToDelete(null);
-      setGroupDeleteDialogOpen(false);
-    }
-  };
-
   const handleSendMessage = async (message: string) => {
     return await sendMessage(message, t, setCurrentSessionId);
-  };
-
-  const handleSendMessageInGroup = async (message: string, groupId: number) => {
-    sessionOperations.handleNewChat();
-    const response = await sendMessage(message, t, setCurrentSessionId);
-    if (response && response.session_id) {
-      await addSessionToGroup(response.session_id, groupId);
-      await refreshSessions();
-      await loadGroupSessions(groupId);
-      dispatchCustomEvent('groupUpdated', { groupId, sessionId: response.session_id });
-    }
-  };
-
-  const handleCreateGroup = async (name: string) => {
-    await createGroup(name);
-  };
-
-  const handleSelectGroup = (groupId: number) => {
-    window.location.href = `/g/${groupId}`;
-  };
-
-  const handleMoveToGroupSession = (sessionId: number | string) => {
-    setGroupsSelectedSessionId(sessionId);
-    setGroupsSelectMode(true);
-    setGroupsOpen(true);
-  };
-
-  const handleMoveToGroup = async (groupId: number) => {
-    if (groupsSelectedSessionId !== null && typeof groupsSelectedSessionId === 'number') {
-      await addSessionToGroup(groupsSelectedSessionId, groupId);
-      await refreshSessions();
-      await loadGroupSessions(groupId);
-      Object.keys(groupSessions).forEach(async (gId) => {
-        const groupIdNum = parseInt(gId);
-        if (groupIdNum !== groupId) {
-          await loadGroupSessions(groupIdNum);
-        }
-      });
-      dispatchCustomEvent('groupUpdated', { groupId, sessionId: groupsSelectedSessionId });
-    }
-    setGroupsOpen(false);
-    setGroupsSelectMode(false);
-    setGroupsSelectedSessionId(null);
-  };
-
-  const handleOpenGroups = () => {
-    setGroupsSelectMode(false);
-    setGroupsSelectedSessionId(null);
-    setGroupsOpen(true);
-  };
-
-  const handleUngroupSession = async (sessionId: number | string) => {
-    if (typeof sessionId === 'number') {
-      await ungroupSession(sessionId);
-      await refreshSessions();
-      Object.keys(groupSessions).forEach(async (gId) => {
-        await loadGroupSessions(parseInt(gId));
-      });
-    }
   };
 
   return (
@@ -263,67 +147,42 @@ function App() {
         user={user}
         onLogin={handleLogin}
         onLogout={handleLogout}
-        onOpenSettings={() => setSettingsOpen(true)}
         onOpenSearch={() => setSearchDialogOpen(true)}
-        onOpenGroups={() => handleOpenGroups()}
         sessions={sessions}
         currentSessionId={currentSessionId}
         onNewChat={handleNewChat}
         onSelectSession={sessionOperations.handleSelectSession}
         onDeleteSession={handleDeleteSession}
         onExportPdf={handleExportPdf}
-        onUngroupSession={handleUngroupSession}
-        groups={groups}
-        currentGroupId={urlGroupId || null}
-        onSelectGroup={handleSelectGroup}
-        onMoveToGroup={handleMoveToGroupSession}
-        onDeleteGroup={handleDeleteGroup}
-        groupSessions={groupSessions}
-        onLoadGroupSessions={loadGroupSessions}
       />
 
-      {urlGroupId ? (
-        <GroupView
-          onSelectSession={sessionOperations.handleSelectSession}
-          onSendMessageInGroup={handleSendMessageInGroup}
-          isLoading={isLoading}
-          onFocusChange={setIsInputFocused}
-        />
-      ) : (
-        <main className="main-content">
-          <Header
-            sidebarOpen={sidebarOpen}
-            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-            currentSessionId={currentSessionId}
-            onDeleteSession={handleDeleteSession}
-            onExportPdf={handleExportPdf}
-          />
-
-          <ChatContainer
-          messages={messages}
-          onSendMessage={handleSendMessage}
-          onCancelMessage={cancelMessage}
-          onEditMessage={handleEditMessage}
-          onNavigateVersion={handleNavigateVersion}
-          urlSessionId={urlSessionId}
-          isLoading={isLoading}
+      <main className="main-content">
+        <Header
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          currentSessionId={currentSessionId}
+          onDeleteSession={handleDeleteSession}
+          onExportPdf={handleExportPdf}
         />
 
-        {/* Always show input in main view so New Chat shows the input immediately */}
-        <MessageInput
-          onSendMessage={handleSendMessage}
-          onFocusChange={setIsInputFocused}
-          isLoading={isLoading}
-          onCancel={cancelMessage}
-        />
-        </main>
-      )}
-
-      <SettingsDialog
-        isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        user={user}
+        <ChatContainer
+        messages={messages}
+        onSendMessage={handleSendMessage}
+        onCancelMessage={cancelMessage}
+        onEditMessage={handleEditMessage}
+        onNavigateVersion={handleNavigateVersion}
+        urlSessionId={urlSessionId}
+        isLoading={isLoading}
       />
+
+      {/* Always show input in main view so New Chat shows the input immediately */}
+      <MessageInput
+        onSendMessage={handleSendMessage}
+        onFocusChange={setIsInputFocused}
+        isLoading={isLoading}
+        onCancel={cancelMessage}
+      />
+      </main>
 
       <DeleteDialog
         isOpen={deleteDialogOpen}
@@ -346,8 +205,7 @@ function App() {
 
 
 
-
-
+        
       {chatNotFoundError && (
         <ErrorBanner
           message={t.chat.chatNotFoundMessage}
@@ -355,44 +213,7 @@ function App() {
         />
       )}
 
-      {user && (
-        <>
-          <GroupsDialog
-            isOpen={groupsOpen}
-            onClose={() => {
-              setGroupsOpen(false);
-              setGroupsSelectMode(false);
-              setGroupsSelectedSessionId(null);
-            }}
-            groups={groups}
-            onCreateGroup={handleCreateGroup}
-            onSelectGroup={handleSelectGroup}
-            selectMode={groupsSelectMode}
-            onMoveToGroup={handleMoveToGroup}
-            onDeleteGroup={handleDeleteGroup}
-            onUngroup={() => {
-              if (groupsSelectedSessionId !== null && typeof groupsSelectedSessionId === 'number') {
-                handleUngroupSession(groupsSelectedSessionId);
-              }
-            }}
-            isSessionInGroup={
-              groupsSelectedSessionId !== null && typeof groupsSelectedSessionId === 'number'
-                ? (sessions.find(s => s.id === groupsSelectedSessionId) as any)?.is_in_group || false
-                : false
-            }
-          />
 
-          <DeleteDialog
-            isOpen={groupDeleteDialogOpen}
-            onClose={() => setGroupDeleteDialogOpen(false)}
-            onConfirm={confirmDeleteGroup}
-            title='Usuń grupę'
-            message='Spowoduje to trwałe usunięcie grupy oraz wszystkich rozmów w niej zawartych.'
-            cancelText={t.sidebar.cancel}
-            deleteText='Usuń'
-          />
-        </>
-      )}
     </div>
   );
 }

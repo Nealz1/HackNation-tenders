@@ -8,18 +8,15 @@ import {
   SearchIcon,
   ChatIcon,
   DotsVerticalIcon,
-  ChevronDownIcon,
   TrashIcon,
   UserIcon,
-  FolderIcon,
-  SettingsIcon,
   LogoutIcon,
   LoginIcon,
   EditIcon,
   DownloadIcon,
   MenuIcon
 } from "../icons";
-import type { User, ChatSession, Group } from "../../types";
+import type { User, ChatSession } from "../../types";
 import { useState } from "react";
 
 interface SidebarProps {
@@ -28,9 +25,7 @@ interface SidebarProps {
   user: User | null;
   onLogin: () => void;
   onLogout: () => void;
-  onOpenSettings: () => void;
   onOpenSearch?: () => void;
-  onOpenGroups?: () => void;
   sessions: ChatSession[];
   currentSessionId: number | string | null;
   onNewChat: () => void;
@@ -38,14 +33,6 @@ interface SidebarProps {
   onDeleteSession: (sessionId: number | string) => void;
   onRenameSession?: (sessionId: number | string, newTitle: string) => void;
   onExportPdf?: (sessionId: number | string) => void;
-  onMoveToGroup?: (sessionId: number | string) => void;
-  onUngroupSession?: (sessionId: number | string) => void;
-  groups: Group[];
-  currentGroupId: string | null;
-  onSelectGroup?: (groupId: number) => void;
-  onDeleteGroup?: (groupId: number) => void;
-  groupSessions?: Record<number, ChatSession[]>;
-  onLoadGroupSessions?: (groupId: number) => Promise<ChatSession[]>;
 }
 
 const ChatHistoryItem = ({
@@ -55,11 +42,7 @@ const ChatHistoryItem = ({
   onDelete,
   onRename,
   onExport,
-  onMoveToGroup,
-  onUngroup,
   t,
-  isLoggedIn,
-  isInGroup,
 }: {
   session: ChatSession;
   isActive: boolean;
@@ -67,11 +50,7 @@ const ChatHistoryItem = ({
   onDelete: () => void;
   onRename?: (newTitle: string) => void;
   onExport?: () => void;
-  onMoveToGroup?: (sessionId: number | string) => void;
-  onUngroup?: () => void;
   t: any;
-  isLoggedIn: boolean;
-  isInGroup: boolean;
 }) => {
   const chatMenu = useDropdownMenu();
   const [isRenaming, setIsRenaming] = useState(false);
@@ -160,35 +139,6 @@ const ChatHistoryItem = ({
                 {t.sidebar.rename}
               </button>
             )}
-            {!session.is_archived && isLoggedIn && (
-              <>
-                {isInGroup && onUngroup ? (
-                  <button
-                    className="chat-dropdown-item"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onUngroup();
-                      chatMenu.close();
-                    }}
-                  >
-                    <FolderIcon />
-                    {t.sidebar.ungroup}
-                  </button>
-                ) : onMoveToGroup && (
-                  <button
-                    className="chat-dropdown-item"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onMoveToGroup(session.id);
-                      chatMenu.close();
-                    }}
-                  >
-                    <FolderIcon />
-                    {t.sidebar.moveToGroup}
-                  </button>
-                )}
-              </>
-            )}
 
             {onExport && (
               <button
@@ -222,198 +172,14 @@ const ChatHistoryItem = ({
   );
 };
 
-const GroupPreviewChatItem = ({
-  session,
-  isActive,
-  onSelectSession,
-  onRenameSession,
-  onMoveToGroup,
-  onExportPdf,
-  onDeleteSession,
-  t,
-}: {
-  session: ChatSession;
-  isActive: boolean;
-  onSelectSession: (id: number | string) => void;
-  onRenameSession?: (sessionId: number | string, currentTitle: string) => void;
-  onMoveToGroup?: (sessionId: number | string) => void;
-  onExportPdf?: (sessionId: number | string) => void;
-  onDeleteSession: (sessionId: number | string) => void;
-  t: any;
-}) => {
-  const chatMenu = useDropdownMenu();
 
-  return (
-    <div className={`group-preview-chat ${isActive ? 'active' : ''}`}>
-      <div className="group-preview-chat-main" onClick={() => onSelectSession(session.id)}>
-        <ChatIcon width={12} height={12} />
-        <span>{session.title}</span>
-      </div>
-      <div className="chat-item-menu" ref={chatMenu.menuRef}>
-        <button
-          className="chat-menu-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            chatMenu.toggle();
-          }}
-          title={t.header.moreOptions}
-        >
-          <DotsVerticalIcon width={14} height={14} />
-        </button>
-        {chatMenu.isOpen && (
-          <div className="chat-dropdown">
-            {onRenameSession && (
-              <button
-                className="chat-dropdown-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRenameSession(session.id, session.title);
-                  chatMenu.close();
-                }}
-              >
-                <EditIcon />
-                {t.sidebar.rename}
-              </button>
-            )}
-            {onMoveToGroup && (
-              <button
-                className="chat-dropdown-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMoveToGroup(session.id);
-                  chatMenu.close();
-                }}
-              >
-                <FolderIcon />
-                {t.sidebar.moveToGroup}
-              </button>
-            )}
-
-            {onExportPdf && (
-              <button
-                className="chat-dropdown-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onExportPdf(session.id);
-                  chatMenu.close();
-                }}
-              >
-                <DownloadIcon />
-                {t.sidebar.exportPdf}
-              </button>
-            )}
-
-            <button
-              className="chat-dropdown-item danger"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteSession(session.id);
-                chatMenu.close();
-              }}
-            >
-              <TrashIcon />
-              {t.sidebar.delete}
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const GroupItem = ({
-  group,
-  currentGroupId,
-  currentSessionId,
-  groupSessions,
-  isExpanded,
-  onToggleExpand,
-  onSelectGroup,
-  onSelectSession,
-  onRenameSession,
-  onMoveToGroup,
-  onExportPdf,
-  onDeleteSession,
-  t,
-}: {
-  group: Group;
-  currentGroupId: string | null;
-  currentSessionId: number | string | null;
-  groupSessions: Record<number, ChatSession[]>;
-  isExpanded: boolean;
-  onToggleExpand: (groupId: number) => void;
-  onSelectGroup?: (groupId: number) => void;
-  onSelectSession: (sessionId: number | string) => void;
-  onRenameSession?: (sessionId: number | string, currentTitle: string) => void;
-  onMoveToGroup?: (sessionId: number | string) => void;
-  onExportPdf?: (sessionId: number | string) => void;
-  onDeleteSession: (sessionId: number | string) => void;
-  onLoadGroupSessions?: (groupId: number) => Promise<ChatSession[]>;
-  t: any;
-}) => {
-  const getGroupChatPreview = () => {
-    if (groupSessions[group.id]) {
-      return groupSessions[group.id];
-    }
-    return [];
-  };
-
-  return (
-    <div key={group.id}>
-      <div className={`group-item ${currentGroupId === String(group.id) ? 'active' : ''}`}>
-        <div className="group-item-left" onClick={() => onSelectGroup?.(group.id)}>
-          <FolderIcon width={16} height={16} />
-          <span>{group.name}</span>
-        </div>
-        <button
-          className="group-expand-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleExpand(group.id);
-          }}
-          aria-label="Expand group"
-        >
-          <ChevronDownIcon
-            className={`group-expand-icon ${isExpanded ? 'rotated' : ''}`}
-            width={16}
-            height={16}
-          />
-        </button>
-      </div>
-      {isExpanded && (
-        <div className="group-chat-preview">
-          {getGroupChatPreview().map((session) => (
-            <GroupPreviewChatItem
-              key={session.id}
-              session={session}
-              isActive={session.id === currentSessionId}
-              onSelectSession={onSelectSession}
-              onRenameSession={onRenameSession}
-              onMoveToGroup={onMoveToGroup}
-              onExportPdf={onExportPdf}
-              onDeleteSession={onDeleteSession}
-              t={t}
-            />
-          ))}
-          {getGroupChatPreview().length === 0 && (
-            <div className="group-preview-empty">
-              Brak rozmów
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
 
 export const Sidebar = ({
   sidebarOpen,
   user,
   onLogin,
   onLogout,
-  onOpenSettings,
   onOpenSearch,
-  onOpenGroups,
   sessions,
   currentSessionId,
   onNewChat,
@@ -421,39 +187,13 @@ export const Sidebar = ({
   onDeleteSession,
   onRenameSession,
   onExportPdf,
-  onMoveToGroup,
-  onUngroupSession,
-  groups,
-  currentGroupId,
-  onSelectGroup,
-  groupSessions = {},
-  onLoadGroupSessions,
   onToggleSidebar
 }: SidebarProps & { onOpenHelp?: () => void, onToggleSidebar?: () => void }) => {
   const userMenu = useDropdownMenu();
   const { t } = useTranslations();
-  const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
 
   const isLoggedIn = !!user;
   const displayName = user ? `${user.first_name} ${user.last_name}` : t.sidebar.guest;
-
-  const toggleGroupExpansion = async (groupId: number) => {
-    const isExpanding = !expandedGroups.has(groupId);
-
-    setExpandedGroups(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(groupId)) {
-        newSet.delete(groupId);
-      } else {
-        newSet.add(groupId);
-      }
-      return newSet;
-    });
-
-    if (isExpanding && onLoadGroupSessions && !groupSessions[groupId]) {
-      await onLoadGroupSessions(groupId);
-    }
-  };
 
   const formatSessionDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -527,62 +267,9 @@ export const Sidebar = ({
             </button>
           </Tooltip>
         )}
-
-        {isLoggedIn && (
-          sidebarOpen ? (
-            <button
-              className="groups-btn"
-              onClick={onOpenGroups}
-            >
-              <FolderIcon />
-              <span>{t.sidebar.groups}</span>
-            </button>
-          ) : (
-            <Tooltip text={t.sidebar.groups} shortcut="Ctrl+I">
-              <button
-                className="groups-btn"
-                onClick={onOpenGroups}
-              >
-                <FolderIcon width={18} height={18} />
-              </button>
-            </Tooltip>
-          )
-        )}
       </div>
 
-      {isLoggedIn && sidebarOpen && groups.length > 0 && (
-        <div className="groups-section">
-          <h3>{t.groups.title}</h3>
-          {groups.slice(0, 5).map((group) => (
-            <GroupItem
-              key={group.id}
-              group={group}
-              currentGroupId={currentGroupId}
-              currentSessionId={currentSessionId}
-              groupSessions={groupSessions}
-              isExpanded={expandedGroups.has(group.id)}
-              onToggleExpand={toggleGroupExpansion}
-              onSelectGroup={onSelectGroup}
-              onSelectSession={onSelectSession}
-              onRenameSession={onRenameSession}
-              onMoveToGroup={onMoveToGroup}
-              onExportPdf={onExportPdf}
-              onDeleteSession={onDeleteSession}
-              onLoadGroupSessions={onLoadGroupSessions}
-              t={t}
-            />
-          ))}
-          {groups.length > 5 && (
-            <div
-              className="groups-more-indicator"
-              onClick={onOpenGroups}
-            >
-              <FolderIcon width={14} height={14} />
-              <span>{'+' + (groups.length - 5) + ' więcej'}</span>
-            </div>
-          )}
-        </div>
-      )}
+
 
       {sidebarOpen && sessionsNotInGroups.length > 0 && (
         <div className="chat-history">
@@ -598,11 +285,7 @@ export const Sidebar = ({
                   onDelete={() => onDeleteSession(session.id)}
                   onRename={(newTitle) => onRenameSession?.(session.id, newTitle)}
                   onExport={() => onExportPdf?.(session.id)}
-                  onMoveToGroup={() => onMoveToGroup?.(session.id)}
-                  onUngroup={() => onUngroupSession?.(session.id)}
                   t={t}
-                  isLoggedIn={isLoggedIn}
-                  isInGroup={(session as any).is_in_group || false}
                 />
               ))}
             </div>
@@ -640,19 +323,6 @@ export const Sidebar = ({
             )}
             {userMenu.isOpen && (
               <div className="user-dropdown">
-
-                <button
-                  className="user-dropdown-item"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    userMenu.close();
-                    onOpenSettings();
-                  }}
-                >
-                  <SettingsIcon />
-                  {t.sidebar.settings}
-                </button>
-                <div className="user-dropdown-divider"></div>
                 <button
                   className="user-dropdown-item"
                   onClick={() => {

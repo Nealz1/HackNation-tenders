@@ -3,7 +3,6 @@ export const API_BASE_URL = 'http://localhost:8000';
 export const STORAGE_KEYS = {
   SIDEBAR_OPEN: 'sidebarOpen',
   AUTH_TOKEN: 'auth_token',
-  LANGUAGE: 'language',
   CURRENT_SESSION: 'currentSessionId',
   DRAFT_MESSAGE: 'draft_message',
   LAST_VALIDATION: 'last_validation',
