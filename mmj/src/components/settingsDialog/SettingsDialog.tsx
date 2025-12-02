@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./SettingsDialog.css";
-import { CloseIcon, ArchiveIcon, TrashIcon, CopyIcon } from "../icons";
+import { CloseIcon, CopyIcon } from "../icons";
 import { useTranslations } from "../../hooks/useTranslations";
 import { useAccount } from "../../hooks/useAccount";
 import { getModifierKey, getEscapeKey } from "../../utils/platformUtils";
@@ -16,38 +16,22 @@ interface SettingsDialogProps {
   user?: any;
 }
 
-type Tab = "general" | "account" | "notifications" | "shortcuts";
+type Tab = "general" | "account" | "shortcuts";
 
 export const SettingsDialog = ({
   isOpen,
   onClose,
-  activeSessions = [],
-  onArchiveMultiple,
-  onDeleteMultiple,
   user,
 }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("general");
-  const [showChatSelector, setShowChatSelector] = useState(false);
-  const [selectedChatIds, setSelectedChatIds] = useState<number[]>([]);
-  const [operationType, setOperationType] = useState<'archive' | 'delete' | null>(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
   const { t, language } = useTranslations();
   const { accountInfo, updateAccountInfo, resetAccountInfo, getFullEmail } = useAccount(user);
 
-
-
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isOpen) {
-        if (showConfirmDialog) {
-          handleCancelOperation();
-        } else if (showChatSelector) {
-          handleCancelOperation();
-        } else {
-          onClose();
-        }
+        onClose();
       }
     };
 
@@ -58,72 +42,7 @@ export const SettingsDialog = ({
     return () => {
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [isOpen, showConfirmDialog, showChatSelector, onClose]);
-
-
-
-
-  const handleArchiveAll = () => {
-    setOperationType('archive');
-    setSelectedChatIds(activeSessions.map(s => s.id));
-    setShowConfirmDialog(true);
-  };
-
-  const handleArchiveSelected = () => {
-    setOperationType('archive');
-    setShowChatSelector(true);
-  };
-
-  const handleDeleteAll = () => {
-    setOperationType('delete');
-    setSelectedChatIds(activeSessions.map(s => s.id));
-    setShowConfirmDialog(true);
-  };
-
-  const handleDeleteSelected = () => {
-    setOperationType('delete');
-    setShowChatSelector(true);
-  };
-
-  const handleToggleChatSelection = (chatId: number) => {
-    setSelectedChatIds(prev =>
-      prev.includes(chatId)
-        ? prev.filter(id => id !== chatId)
-        : [...prev, chatId]
-    );
-  };
-
-  const handleConfirmSelection = () => {
-    setShowChatSelector(false);
-    setShowConfirmDialog(true);
-  };
-
-  const handleConfirmOperation = async () => {
-    if (selectedChatIds.length === 0) return;
-
-    setIsProcessing(true);
-    try {
-      if (operationType === 'archive' && onArchiveMultiple) {
-        await onArchiveMultiple(selectedChatIds);
-      } else if (operationType === 'delete' && onDeleteMultiple) {
-        await onDeleteMultiple(selectedChatIds);
-      }
-      setShowConfirmDialog(false);
-      setSelectedChatIds([]);
-      setOperationType(null);
-    } catch (error) {
-      console.error(`Failed to ${operationType} chats:`, error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleCancelOperation = () => {
-    setShowConfirmDialog(false);
-    setShowChatSelector(false);
-    setSelectedChatIds([]);
-    setOperationType(null);
-  };
+  }, [isOpen, onClose]);
 
   const handleCopyEmail = async () => {
     const fullEmail = getFullEmail();
@@ -173,16 +92,7 @@ export const SettingsDialog = ({
               </button>
             )}
 
-            <button
-              className={`settings-nav-item ${activeTab === "notifications" ? "active" : ""}`}
-              onClick={() => setActiveTab("notifications")}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-              {t.settings.notifications}
-            </button>
+
 
             <button
               className={`settings-nav-item ${activeTab === "shortcuts" ? "active" : ""}`}
@@ -201,75 +111,8 @@ export const SettingsDialog = ({
             <>
               <h2 className="settings-title">{t.settings.general}</h2>
 
-
-
               <div className="settings-section">
-                <h3 className="settings-section-title">{t.settings.chatManagement}</h3>
-
-                <div className="settings-row">
-                  <div className="settings-label">
-                    <span>{t.settings.archiveChats}</span>
-                  </div>
-                  <div className="settings-control settings-icon-group">
-                    <button
-                      className="settings-icon-btn"
-                      onClick={handleArchiveSelected}
-                      disabled={activeSessions.length === 0 || isProcessing}
-                      title={t.settings.archiveSelected}
-                    >
-                      <ArchiveIcon />
-                    </button>
-                    <button
-                      className="settings-icon-btn"
-                      onClick={handleArchiveAll}
-                      disabled={activeSessions.length === 0 || isProcessing}
-                      title={t.settings.archiveAll}
-                    >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                        <rect x="1" y="3" width="22" height="5"></rect>
-                        <line x1="10" y1="12" x2="14" y2="12"></line>
-                        <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
-                        <circle cx="7" cy="16" r="1" fill="currentColor"></circle>
-                        <circle cx="17" cy="16" r="1" fill="currentColor"></circle>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="settings-row">
-                  <div className="settings-label">
-                    <span>{t.settings.deleteChats}</span>
-                  </div>
-                  <div className="settings-control settings-icon-group">
-                    <button
-                      className="settings-icon-btn settings-icon-btn-danger"
-                      onClick={handleDeleteSelected}
-                      disabled={activeSessions.length === 0 || isProcessing}
-                      title={t.settings.deleteSelected}
-                    >
-                      <TrashIcon />
-                    </button>
-                    <button
-                      className="settings-icon-btn settings-icon-btn-danger"
-                      onClick={handleDeleteAll}
-                      disabled={activeSessions.length === 0 || isProcessing}
-                      title={t.settings.deleteAll}
-                    >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        <circle cx="12" cy="11" r="1" fill="currentColor"></circle>
-                        <circle cx="9" cy="14" r="1" fill="currentColor"></circle>
-                        <circle cx="15" cy="14" r="1" fill="currentColor"></circle>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                {activeSessions.length === 0 && (
-                  <p className="settings-hint">{t.settings.noChatsAvailable}</p>
-                )}
+                <p className="settings-placeholder">{language === 'pl' ? 'Ogólne ustawienia aplikacji' : 'General application settings'}</p>
               </div>
             </>
           )}
@@ -577,15 +420,7 @@ export const SettingsDialog = ({
             </>
           )}
 
-          {activeTab === "notifications" && (
-            <>
-              <h2 className="settings-title">{t.settings.notifications}</h2>
 
-              <div className="settings-section">
-                <p className="settings-placeholder">{t.settings.notificationsPlaceholder}</p>
-              </div>
-            </>
-          )}
 
           {activeTab === "shortcuts" && (
             <>
@@ -686,103 +521,7 @@ export const SettingsDialog = ({
           )}
         </div>
 
-        {showChatSelector && (
-          <div className="chat-selector-overlay">
-            <div className="chat-selector-dialog">
-              <div className="chat-selector-header">
-                <h3>{t.settings.selectChats}</h3>
-                <button
-                  className="chat-selector-close"
-                  onClick={handleCancelOperation}
-                  title={t.settings.close}
-                >
-                  <CloseIcon />
-                </button>
-              </div>
-              <div className="chat-selector-list">
-                {activeSessions.map((session) => (
-                  <label key={session.id} className="chat-selector-item">
-                    <input
-                      type="checkbox"
-                      checked={selectedChatIds.includes(session.id)}
-                      onChange={() => handleToggleChatSelection(session.id)}
-                    />
-                    <span className="chat-selector-name">
-                      {session.title || `Chat ${session.id}`}
-                    </span>
-                  </label>
-                ))}
-              </div>
-              <div className="chat-selector-footer">
-                <span className="chat-selector-count">
-                  {selectedChatIds.length} {t.settings.chatsSelected}
-                </span>
-                <div className="chat-selector-actions">
-                  <button
-                    className="chat-selector-cancel"
-                    onClick={handleCancelOperation}
-                  >
-                    {t.settings.cancel}
-                  </button>
-                  <button
-                    className="chat-selector-confirm"
-                    onClick={handleConfirmSelection}
-                    disabled={selectedChatIds.length === 0}
-                  >
-                    {t.settings.confirm}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {showConfirmDialog && (
-          <div className="confirm-dialog-overlay">
-            <div className="confirm-dialog">
-              <div className="confirm-dialog-header">
-                <h3>
-                  {operationType === 'archive'
-                    ? t.settings.archiveConfirmTitle
-                    : t.settings.deleteConfirmTitle}
-                </h3>
-                <button
-                  className="confirm-dialog-close"
-                  onClick={handleCancelOperation}
-                  disabled={isProcessing}
-                  title={t.settings.close}
-                >
-                  <CloseIcon />
-                </button>
-              </div>
-              <p>
-                {operationType === 'archive'
-                  ? (selectedChatIds.length === activeSessions.length
-                    ? t.settings.archiveAllConfirmMessage
-                    : t.settings.archiveSelectedConfirmMessage)
-                  : (selectedChatIds.length === activeSessions.length
-                    ? t.settings.deleteAllConfirmMessage
-                    : t.settings.deleteSelectedConfirmMessage)}
-              </p>
-              <div className="confirm-dialog-actions">
-                <button
-                  className="confirm-dialog-cancel"
-                  onClick={handleCancelOperation}
-                  disabled={isProcessing}
-                >
-                  {t.settings.cancel}
-                </button>
-                <button
-                  className={`confirm-dialog-confirm ${operationType === 'delete' ? 'danger' : ''}`}
-                  onClick={handleConfirmOperation}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? '...' : t.settings.confirm}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

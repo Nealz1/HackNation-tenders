@@ -1,2 +1,0 @@
-export { ArchivesDialog } from './ArchivesDialog';
-

@@ -9,12 +9,10 @@ import {
   ChatIcon,
   DotsVerticalIcon,
   ChevronDownIcon,
-  ArchiveIcon,
   TrashIcon,
   UserIcon,
   FolderIcon,
   SettingsIcon,
-  HelpIcon,
   LogoutIcon,
   LoginIcon,
   EditIcon,
@@ -31,15 +29,12 @@ interface SidebarProps {
   onLogin: () => void;
   onLogout: () => void;
   onOpenSettings: () => void;
-  onOpenArchives?: () => void;
-  onOpenHelp?: () => void;
   onOpenSearch?: () => void;
   onOpenGroups?: () => void;
   sessions: ChatSession[];
   currentSessionId: number | string | null;
   onNewChat: () => void;
   onSelectSession: (sessionId: number | string) => void;
-  onArchiveSession: (sessionId: number | string) => void;
   onDeleteSession: (sessionId: number | string) => void;
   onRenameSession?: (sessionId: number | string, newTitle: string) => void;
   onPinSession?: (sessionId: number | string) => void;
@@ -58,7 +53,6 @@ const ChatHistoryItem = ({
   session,
   isActive,
   onSelect,
-  onArchive,
   onDelete,
   onRename,
   onPin,
@@ -72,7 +66,6 @@ const ChatHistoryItem = ({
   session: ChatSession;
   isActive: boolean;
   onSelect: () => void;
-  onArchive: () => void;
   onDelete: () => void;
   onRename?: (newTitle: string) => void;
   onPin?: () => void;
@@ -226,19 +219,7 @@ const ChatHistoryItem = ({
                 {t.sidebar.exportPdf}
               </button>
             )}
-            {isLoggedIn && (
-              <button
-                className="chat-dropdown-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onArchive();
-                  chatMenu.close();
-                }}
-              >
-                <ArchiveIcon />
-                {t.sidebar.archive}
-              </button>
-            )}
+
             <button
               className="chat-dropdown-item danger"
               onClick={(e) => {
@@ -265,7 +246,6 @@ const GroupPreviewChatItem = ({
   onMoveToGroup,
   onPinSession,
   onExportPdf,
-  onArchiveSession,
   onDeleteSession,
   t,
 }: {
@@ -276,7 +256,6 @@ const GroupPreviewChatItem = ({
   onMoveToGroup?: (sessionId: number | string) => void;
   onPinSession?: (sessionId: number | string) => void;
   onExportPdf?: (sessionId: number | string) => void;
-  onArchiveSession: (sessionId: number | string) => void;
   onDeleteSession: (sessionId: number | string) => void;
   t: any;
 }) => {
@@ -353,17 +332,7 @@ const GroupPreviewChatItem = ({
                 {t.sidebar.exportPdf}
               </button>
             )}
-            <button
-              className="chat-dropdown-item"
-              onClick={(e) => {
-                e.stopPropagation();
-                onArchiveSession(session.id);
-                chatMenu.close();
-              }}
-            >
-              <ArchiveIcon />
-              {t.sidebar.archive}
-            </button>
+
             <button
               className="chat-dropdown-item danger"
               onClick={(e) => {
@@ -395,9 +364,8 @@ const GroupItem = ({
   onMoveToGroup,
   onPinSession,
   onExportPdf,
-  onArchiveSession,
   onDeleteSession,
-                       t,
+  t,
 }: {
   group: Group;
   currentGroupId: string | null;
@@ -411,7 +379,6 @@ const GroupItem = ({
   onMoveToGroup?: (sessionId: number | string) => void;
   onPinSession?: (sessionId: number | string) => void;
   onExportPdf?: (sessionId: number | string) => void;
-  onArchiveSession: (sessionId: number | string) => void;
   onDeleteSession: (sessionId: number | string) => void;
   onLoadGroupSessions?: (groupId: number) => Promise<ChatSession[]>;
   t: any;
@@ -457,7 +424,7 @@ const GroupItem = ({
               onMoveToGroup={onMoveToGroup}
               onPinSession={onPinSession}
               onExportPdf={onExportPdf}
-              onArchiveSession={onArchiveSession}
+
               onDeleteSession={onDeleteSession}
               t={t}
             />
@@ -479,15 +446,12 @@ export const Sidebar = ({
   onLogin,
   onLogout,
   onOpenSettings,
-  onOpenArchives,
-  onOpenHelp,
   onOpenSearch,
   onOpenGroups,
   sessions,
   currentSessionId,
   onNewChat,
   onSelectSession,
-  onArchiveSession,
   onDeleteSession,
   onRenameSession,
   onPinSession,
@@ -499,7 +463,7 @@ export const Sidebar = ({
   onSelectGroup,
                             groupSessions = {},
   onLoadGroupSessions
-}: SidebarProps) => {
+}: SidebarProps & { onOpenHelp?: () => void }) => {
   const userMenu = useDropdownMenu();
   const { t } = useTranslations();
   const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
@@ -556,7 +520,7 @@ export const Sidebar = ({
             alt="WAT"
             className="sidebar-logo"
           />
-          {sidebarOpen && <h2>HELPDesk</h2>}
+          {sidebarOpen && <h2>DataServer</h2>}
         </div>
 
         {sidebarOpen ? (
@@ -634,7 +598,6 @@ export const Sidebar = ({
               onMoveToGroup={onMoveToGroup}
               onPinSession={onPinSession}
               onExportPdf={onExportPdf}
-              onArchiveSession={onArchiveSession}
               onDeleteSession={onDeleteSession}
               onLoadGroupSessions={onLoadGroupSessions}
               t={t}
@@ -663,7 +626,6 @@ export const Sidebar = ({
                   session={session}
                   isActive={currentSessionId === session.id}
                   onSelect={() => onSelectSession(session.id)}
-                  onArchive={() => onArchiveSession(session.id)}
                   onDelete={() => onDeleteSession(session.id)}
                   onRename={(newTitle) => onRenameSession?.(session.id, newTitle)}
                   onPin={() => onPinSession?.(session.id)}
@@ -710,19 +672,7 @@ export const Sidebar = ({
             )}
             {userMenu.isOpen && (
               <div className="user-dropdown">
-                {isLoggedIn && (
-                  <button
-                    className="user-dropdown-item"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      userMenu.close();
-                      onOpenArchives && onOpenArchives();
-                    }}
-                  >
-                    <ArchiveIcon />
-                    {t.sidebar.archives}
-                  </button>
-                )}
+
                 <button
                   className="user-dropdown-item"
                   onClick={(e) => {
@@ -733,17 +683,6 @@ export const Sidebar = ({
                 >
                   <SettingsIcon />
                   {t.sidebar.settings}
-                </button>
-                <button
-                  className="user-dropdown-item"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    userMenu.close();
-                    onOpenHelp?.();
-                  }}
-                >
-                  <HelpIcon />
-                  {t.sidebar.help}
                 </button>
                 <div className="user-dropdown-divider"></div>
                 <button

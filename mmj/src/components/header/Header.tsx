@@ -1,6 +1,6 @@
 import { useDropdownMenu } from "../../hooks/useDropdownMenu";
 import { useLanguage } from "../../hooks/useLanguage";
-import { MenuIcon, DotsVerticalIcon, ArchiveIcon, TrashIcon, DownloadIcon } from "../icons";
+import { MenuIcon, DotsVerticalIcon, TrashIcon, DownloadIcon } from "../icons";
 import type { SessionId } from "../../types";
 import "./Header.css";
 
@@ -8,7 +8,6 @@ interface HeaderProps {
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
   currentSessionId: SessionId | null;
-  onArchiveSession: (sessionId: SessionId) => void;
   onDeleteSession: (sessionId: SessionId) => void;
   onExportPdf?: (sessionId: SessionId) => void;
 }
@@ -17,19 +16,11 @@ export const Header = ({
   sidebarOpen,
   onToggleSidebar,
   currentSessionId,
-  onArchiveSession,
   onDeleteSession,
   onExportPdf
 }: HeaderProps) => {
   const { t } = useLanguage();
   const { isOpen, menuRef, toggle, close } = useDropdownMenu();
-
-  const handleArchive = () => {
-    close();
-    if (currentSessionId) {
-      onArchiveSession(currentSessionId);
-    }
-  };
 
   const handleDelete = () => {
     close();
@@ -76,14 +67,6 @@ export const Header = ({
             >
               <DownloadIcon />
               {t.sidebar.exportPdf}
-            </button>
-            <button
-              className="header-dropdown-item"
-              onClick={handleArchive}
-              disabled={!currentSessionId}
-            >
-              <ArchiveIcon />
-              {t.sidebar.archive}
             </button>
             <button
               className="header-dropdown-item danger"

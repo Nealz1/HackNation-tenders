@@ -8,8 +8,8 @@ import { ChatContainer } from "./components/chatContainer";
 import { MessageInput } from "./components/messageInput";
 import { SettingsDialog } from "./components/settingsDialog";
 import { DeleteDialog } from "./components/deleteDialog";
-import { ArchivesDialog } from "./components/archivesDialog";
-import { HelpDialog } from "./components/helpDialog";
+// import { ArchivesDialog } from "./components/archivesDialog"; // Removed Archive functionality
+
 import { BackgroundLogo } from "./components/backgroundLogo";
 import { ErrorBanner } from "./components/errorBanner";
 
@@ -37,8 +37,6 @@ function App() {
   });
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [archivesOpen, setArchivesOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [groupDeleteDialogOpen, setGroupDeleteDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<number | string | null>(null);
@@ -66,17 +64,12 @@ function App() {
 
   const {
     sessions,
-    archivedSessions,
     currentSessionId,
     setCurrentSessionId,
     loadSession,
-    archiveSession,
-    unarchiveSession,
     deleteSession,
-    updateSessionTitle,
-    pinSession,
+      pinSession,
     refreshSessions,
-    refreshArchivedSessions,
     loading,
   } = useChatHistory(!!user);
 
@@ -87,7 +80,7 @@ function App() {
     sessions
   );
 
-  const { handleRegenerateMessage, handleEditMessage, handleNavigateVersion } = useMessageHandlers(
+  const {handleEditMessage, handleNavigateVersion } = useMessageHandlers(
     currentSessionId,
     messages,
     setMessages
@@ -106,15 +99,8 @@ function App() {
   );
 
   const sessionOperations = useSessionOperations(
-    currentSessionId,
-    setCurrentSessionId,
     setMessages,
-    t.chat.welcomeMessage,
-    archiveSession,
-    unarchiveSession,
-    deleteSession,
-    updateSessionTitle,
-    refreshArchivedSessions
+    t.chat.welcomeMessage
   );
 
   useSessionLoader(
@@ -134,7 +120,6 @@ function App() {
     onSearch: () => setSearchDialogOpen(true),
     onToggleSidebar: () => setSidebarOpen(!sidebarOpen),
     onOpenSettings: () => setSettingsOpen(true),
-    onOpenArchives: () => setArchivesOpen(true),
     onFocusInput: () => {
       const input = document.querySelector<HTMLInputElement>('.message-input');
       input?.focus();
@@ -278,17 +263,13 @@ function App() {
         onLogin={handleLogin}
         onLogout={handleLogout}
         onOpenSettings={() => setSettingsOpen(true)}
-        onOpenArchives={() => setArchivesOpen(true)}
-        onOpenHelp={() => setHelpOpen(true)}
         onOpenSearch={() => setSearchDialogOpen(true)}
         onOpenGroups={() => handleOpenGroups()}
         sessions={sessions}
         currentSessionId={currentSessionId}
         onNewChat={sessionOperations.handleNewChat}
         onSelectSession={sessionOperations.handleSelectSession}
-        onArchiveSession={sessionOperations.handleArchiveSession}
         onDeleteSession={handleDeleteSession}
-        onRenameSession={sessionOperations.handleRenameSession}
         onPinSession={handlePinSession}
         onExportPdf={handleExportPdf}
         onUngroupSession={handleUngroupSession}
@@ -317,7 +298,6 @@ function App() {
             sidebarOpen={sidebarOpen}
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             currentSessionId={currentSessionId}
-            onArchiveSession={sessionOperations.handleArchiveSession}
             onDeleteSession={handleDeleteSession}
             onExportPdf={handleExportPdf}
           />
@@ -326,12 +306,10 @@ function App() {
           messages={messages}
           onSendMessage={handleSendMessage}
           onCancelMessage={cancelMessage}
-          onRegenerateMessage={handleRegenerateMessage}
           onEditMessage={handleEditMessage}
           onNavigateVersion={handleNavigateVersion}
           urlSessionId={urlSessionId}
           isLoading={isLoading}
-          setMessages={setMessages}
         />
 
         {(urlSessionId || messages.some(msg => msg.sender === "user")) && (
@@ -348,9 +326,6 @@ function App() {
       <SettingsDialog
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        activeSessions={sessions.filter(s => !s.is_archived)}
-        onArchiveMultiple={sessionOperations.handleArchiveMultiple}
-        onDeleteMultiple={sessionOperations.handleDeleteMultiple}
         user={user}
       />
 
@@ -364,15 +339,7 @@ function App() {
         deleteText={t.sidebar.delete}
       />
 
-      <ArchivesDialog
-        isOpen={archivesOpen}
-        onClose={() => setArchivesOpen(false)}
-        archivedSessions={archivedSessions}
-        onUnarchiveSession={sessionOperations.handleUnarchiveSession}
-        onDeleteSession={sessionOperations.handleDeleteArchivedSession}
-        onDeleteMultiple={sessionOperations.handleDeleteMultiple}
-        t={t}
-      />
+
 
       <SearchDialog
         isOpen={searchDialogOpen}
@@ -381,10 +348,7 @@ function App() {
         onSelectSession={sessionOperations.handleSelectSession}
       />
 
-      <HelpDialog
-        isOpen={helpOpen}
-        onClose={() => setHelpOpen(false)}
-      />
+
 
 
 

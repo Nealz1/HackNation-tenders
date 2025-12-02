@@ -3,13 +3,11 @@ import "./ChatContainer.css";
 import { useLanguage } from "../../hooks/useLanguage";
 import { MessageInput } from "../messageInput";
 import { MessageContent } from "../messageContent/MessageContent";
-import { ThumbsUpIcon, ThumbsDownIcon, CopyIcon, RegenerateIcon, EditIcon, SpeakerIcon, ExplainIcon } from "../icons";
+import { CopyIcon, EditIcon, SpeakerIcon } from "../icons";
 import type { Message } from "../../types";
 import { UI_FEEDBACK_DURATIONS } from "../../config/constants";
-import { authService } from "../../services/authService";
 import { speak } from "../../utils/speech";
-import { useAuth } from "../../hooks/useAuth";
-import { ExplanationDialog } from "../explanationDialog";
+
 
 interface VersionNavigatorProps {
   currentIndex: number;
@@ -50,12 +48,7 @@ interface MessageActionsProps {
   copiedIndex: number | null;
   onCopy: (text: string, index: number) => void;
   onEdit?: () => void;
-  onRegenerate?: () => void;
-  onExplain?: () => void;
   messageNodeId?: number;
-  feedback?: string | null;
-  onFeedback?: (nodeId: number, feedback: string | null) => void;
-  isAuthenticated?: boolean;
 }
 
 const MessageActions = memo(({
@@ -65,26 +58,9 @@ const MessageActions = memo(({
   copiedIndex,
   onCopy,
   onEdit,
-  onRegenerate,
-  onExplain,
-  messageNodeId,
-  feedback,
-  onFeedback,
-  isAuthenticated
+  messageNodeId
 }: MessageActionsProps) => {
   const { language } = useLanguage();
-
-  const handleFeedback = async (feedbackType: string) => {
-    if (messageNodeId && onFeedback) {
-      try {
-        const newFeedback = feedback === feedbackType ? 'neutral' : feedbackType;
-        await authService.submitFeedback(messageNodeId, newFeedback);
-        onFeedback(messageNodeId, newFeedback);
-      } catch (error) {
-        console.error('Failed to submit feedback:', error);
-      }
-    }
-  };
 
   const handleTTS = () => {
     const messageId = messageNodeId ? String(messageNodeId) : `${messageIndex}-${messageText.substring(0, 20)}`;
@@ -111,42 +87,6 @@ const MessageActions = memo(({
       )}
       {messageType === 'bot' && (
         <>
-          {isAuthenticated && (
-            <>
-              <button
-                className={`message-action-btn ${feedback === 'like' ? 'feedback-selected feedback-like' : ''}`}
-                onClick={() => handleFeedback('like')}
-                title={feedback === 'like' ? "Click to remove like" : "Like"}
-              >
-                <ThumbsUpIcon width={14} height={14} />
-              </button>
-              <button
-                className={`message-action-btn ${feedback === 'dislike' ? 'feedback-selected feedback-dislike' : ''}`}
-                onClick={() => handleFeedback('dislike')}
-                title={feedback === 'dislike' ? "Click to remove dislike" : "Dislike"}
-              >
-                <ThumbsDownIcon width={14} height={14} />
-              </button>
-              {onRegenerate && (
-                <button
-                  className="message-action-btn"
-                  onClick={onRegenerate}
-                  title="Regenerate"
-                >
-                  <RegenerateIcon width={14} height={14} />
-                </button>
-              )}
-            </>
-          )}
-          {onExplain && (
-            <button
-              className="message-action-btn"
-              onClick={onExplain}
-              title="Explain decision"
-            >
-              <ExplainIcon width={14} height={14} />
-            </button>
-          )}
           <button
             className="message-action-btn"
             onClick={handleTTS}
@@ -166,7 +106,6 @@ export interface ChatContainerProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   onCancelMessage: () => void;
-  onRegenerateMessage?: (index: number) => void;
   onEditMessage?: (index: number, newContent: string) => void;
   onNavigateVersion?: (index: number, direction: 'prev' | 'next') => void;
   urlSessionId?: string;
@@ -177,21 +116,16 @@ export interface ChatContainerProps {
 export const ChatContainer = ({
   messages,
   onSendMessage,
-  onRegenerateMessage,
   onEditMessage,
   onNavigateVersion,
   urlSessionId,
-  isLoading,
-  setMessages
+  isLoading
 }: ChatContainerProps) => {
   const { t } = useLanguage();
-  const { user } = useAuth();
-  const isAuthenticated = !!user;
   const welcomeMessage = t.chat.welcomeMessage;
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editContent, setEditContent] = useState<string>("");
-  const [explanationText, setExplanationText] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const hasUserMessages = messages.some(msg => msg.sender === "user");
@@ -239,30 +173,6 @@ export const ChatContainer = ({
     } else if (e.key === 'Escape') {
       cancelEditing();
     }
-  };
-
-  const handleFeedback = (nodeId: number, feedback: string | null) => {
-    if (!setMessages) return;
-
-    setMessages(prev => prev.map(msg =>
-      msg.nodeId === nodeId
-        ? { ...msg, feedback }
-        : msg
-    ));
-  };
-
-  const handleExplain = (messageIndex: number) => {
-    for (let i = messageIndex - 1; i >= 0; i--) {
-      if (messages[i].sender === 'user') {
-        setExplanationText(messages[i].text);
-        return;
-      }
-    }
-    setExplanationText("Brak poprzedniego zapytania użytkownika");
-  };
-
-  const closeExplanation = () => {
-    setExplanationText(null);
   };
 
   if (!urlSessionId && !hasUserMessages) {
@@ -342,12 +252,7 @@ export const ChatContainer = ({
                     copiedIndex={copiedIndex}
                     onCopy={handleCopy}
                     onEdit={msg.sender === 'user' ? () => startEditing(i, msg.text) : undefined}
-                    onRegenerate={msg.sender === 'bot' && isAuthenticated ? () => onRegenerateMessage?.(i) : undefined}
-                    onExplain={msg.sender === 'bot' ? () => handleExplain(i) : undefined}
                     messageNodeId={msg.nodeId}
-                    feedback={msg.feedback}
-                    onFeedback={handleFeedback}
-                    isAuthenticated={isAuthenticated}
                   />
                 </div>
               )}
@@ -365,12 +270,6 @@ export const ChatContainer = ({
         )}
         <div ref={messagesEndRef} />
       </div>
-      {explanationText && (
-        <ExplanationDialog
-          messageText={explanationText}
-          onClose={closeExplanation}
-        />
-      )}
     </div>
   );
 };
