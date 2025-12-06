@@ -52,94 +52,46 @@
   font-size: 1rem;
 }
 
-/* Info box */
-.criteria-info-box {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border: 1px solid #f59e0b;
-  border-radius: 12px;
-  padding: 1.25rem;
+/* Section styles */
+.criteria-section,
+.validity-section {
   margin-bottom: 2rem;
 }
 
-.info-icon {
-  font-size: 2rem;
-}
-
-.info-content {
-  flex: 1;
-}
-
-.info-content h3 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
-  color: #92400e;
-}
-
-.info-content p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #b45309;
-}
-
-.weight-indicator {
+.section-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 0.75rem 1.25rem;
-  border-radius: 10px;
-  min-width: 100px;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
-.weight-indicator.valid {
-  background: #d1fae5;
-  border: 1px solid #10b981;
-}
-
-.weight-indicator.invalid {
-  background: #fee2e2;
-  border: 1px solid #ef4444;
-}
-
-.weight-value {
+.section-icon {
   font-size: 1.5rem;
-  font-weight: 700;
 }
 
-.weight-indicator.valid .weight-value {
-  color: #065f46;
+.section-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #1f2937;
 }
 
-.weight-indicator.invalid .weight-value {
-  color: #dc2626;
+.section-description {
+  margin: 0 0 1rem 0;
+  color: #6b7280;
+  font-size: 0.9rem;
 }
 
-.weight-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.weight-indicator.valid .weight-label {
-  color: #10b981;
-}
-
-.weight-indicator.invalid .weight-label {
-  color: #ef4444;
-}
-
-/* Criteria list */
-.criteria-list {
+/* Criteria list - fixed version */
+.criteria-list.fixed {
   background: #f9fafb;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
-.criteria-list-header {
+.criteria-list.fixed .criteria-list-header {
   display: grid;
-  grid-template-columns: 50px 1fr 120px 60px;
+  grid-template-columns: 50px 1fr 120px;
   gap: 1rem;
   padding: 1rem 1.25rem;
   background: linear-gradient(135deg, #4f46e5, #7c3aed);
@@ -148,22 +100,21 @@
   font-size: 0.9rem;
 }
 
-.criterion-item {
+.criteria-list.fixed .criteria-list-header.validity-header {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.criterion-item.fixed {
   display: grid;
-  grid-template-columns: 50px 1fr 120px 60px;
+  grid-template-columns: 50px 1fr 120px;
   gap: 1rem;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #e5e7eb;
   align-items: center;
   background: white;
-  transition: background 0.2s;
 }
 
-.criterion-item:hover {
-  background: #f3f4f6;
-}
-
-.criterion-item:last-child {
+.criterion-item.fixed:last-of-type {
   border-bottom: none;
 }
 
@@ -173,93 +124,60 @@
   text-align: center;
 }
 
-.criterion-name-input {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+.criterion-name-display {
   font-size: 0.95rem;
-  transition: all 0.2s;
-}
-
-.criterion-name-input:focus {
-  outline: none;
-  border-color: #7c3aed;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-}
-
-.col-weight {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.criterion-weight-input {
-  width: 70px;
-  padding: 0.6rem 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  text-align: center;
-  transition: all 0.2s;
-}
-
-.criterion-weight-input:focus {
-  outline: none;
-  border-color: #7c3aed;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-}
-
-.weight-suffix {
-  color: #6b7280;
+  color: #374151;
   font-weight: 500;
 }
 
-.col-actions {
+.weight-display {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #7c3aed;
+  background: #f3e8ff;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
   text-align: center;
 }
 
-.btn-remove-criterion {
-  padding: 0.5rem 0.6rem;
-  background: transparent;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-remove-criterion:hover {
-  background: #fee2e2;
-  border-color: #f87171;
-}
-
-/* Add criterion button */
-.btn-add-criterion {
-  width: 100%;
+/* Validity toggle in table */
+.col-status {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-  border: 2px dashed #22c55e;
-  border-radius: 12px;
-  color: #16a34a;
-  font-size: 1rem;
-  font-weight: 600;
+}
+
+.validity-toggle {
   cursor: pointer;
+}
+
+.validity-toggle input {
+  display: none;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s;
-  margin-bottom: 2rem;
 }
 
-.btn-add-criterion:hover {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-  border-color: #16a34a;
+.status-badge.active {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
 }
 
-.btn-add-criterion .btn-icon {
-  font-size: 1.25rem;
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+
+.validity-toggle:hover .status-badge {
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Actions */
@@ -268,6 +186,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  margin-top: 2rem;
 }
 
 .btn-go-to-analysis {
@@ -287,31 +206,14 @@
   box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);
 }
 
-.btn-go-to-analysis:hover:not(:disabled) {
+.btn-go-to-analysis:hover {
   background: linear-gradient(135deg, #6d28d9, #5b21b6);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(109, 40, 217, 0.4);
 }
 
-.btn-go-to-analysis:disabled {
-  background: #d1d5db;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
 .btn-go-to-analysis .arrow-icon {
   font-size: 1.25rem;
-}
-
-.weight-warning {
-  margin: 0;
-  padding: 0.75rem 1.25rem;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  color: #dc2626;
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 
 /* Responsive */
@@ -324,19 +226,14 @@
     padding: 1.5rem;
   }
 
-  .criteria-info-box {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .criteria-list-header,
-  .criterion-item {
-    grid-template-columns: 40px 1fr 80px 50px;
+  .criteria-list.fixed .criteria-list-header,
+  .criterion-item.fixed {
+    grid-template-columns: 40px 1fr 80px;
     gap: 0.5rem;
     padding: 0.75rem 1rem;
   }
 
-  .criterion-weight-input {
-    width: 50px;
+  .validity-section {
+    padding: 1rem;
   }
 }

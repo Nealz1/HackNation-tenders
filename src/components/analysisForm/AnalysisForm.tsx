@@ -47,8 +47,9 @@ const mockOffers: Offer[] = [
 ];
 
 export function AnalysisForm({ onClose }: AnalysisFormProps) {
-  const [offers] = useState<Offer[]>(mockOffers);
+  const [offers, setOffers] = useState<Offer[]>(mockOffers);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -61,6 +62,25 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
 
   const handleBackToOffers = () => {
     setShowAnalysis(false);
+  };
+
+  const handleEditOffer = (offer: Offer) => {
+    setEditingOffer({ ...offer });
+  };
+
+  const handleEditChange = (field: keyof Offer, value: string | number) => {
+    if (!editingOffer) return;
+    setEditingOffer(prev => prev ? { ...prev, [field]: value } : null);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingOffer) return;
+    setOffers(prev => prev.map(o => o.id === editingOffer.id ? editingOffer : o));
+    setEditingOffer(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingOffer(null);
   };
 
   // Funkcja do iteracyjnego wyznaczania ofert poza zakresem ±30%
@@ -212,7 +232,7 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
                     </button>
                     <button 
                       className="btn-edit-offer" 
-                      onClick={() => {/* TODO: edytuj dane oferty */}}
+                      onClick={() => handleEditOffer(offer)}
                       title="Edytuj dane oferty"
                     >
                       ✏️ Edytuj
@@ -406,6 +426,73 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
           </div>
         )}
       </div>
+
+      {/* Modal edycji oferty */}
+      {editingOffer && (
+        <div className="edit-modal-overlay" onClick={handleCancelEdit}>
+          <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="edit-modal-header">
+              <h3>Edytuj ofertę</h3>
+              <button className="btn-close-modal" onClick={handleCancelEdit}>×</button>
+            </div>
+            <div className="edit-modal-content">
+              <div className="edit-form-group">
+                <label>Nazwa firmy</label>
+                <input
+                  type="text"
+                  value={editingOffer.companyName}
+                  onChange={(e) => handleEditChange('companyName', e.target.value)}
+                />
+              </div>
+              <div className="edit-form-group">
+                <label>Cena (PLN)</label>
+                <input
+                  type="number"
+                  value={editingOffer.price}
+                  onChange={(e) => handleEditChange('price', Number(e.target.value))}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              <div className="edit-form-group">
+                <label>Gwarancja (miesiące)</label>
+                <input
+                  type="number"
+                  value={editingOffer.warranty}
+                  onChange={(e) => handleEditChange('warranty', Number(e.target.value))}
+                  min="0"
+                />
+              </div>
+              <div className="edit-form-group">
+                <label>Termin realizacji (dni)</label>
+                <input
+                  type="number"
+                  value={editingOffer.completionTime}
+                  onChange={(e) => handleEditChange('completionTime', Number(e.target.value))}
+                  min="0"
+                />
+              </div>
+              <div className="edit-form-group">
+                <label>Doświadczenie wykonawcy (lata)</label>
+                <input
+                  type="number"
+                  value={editingOffer.experience}
+                  onChange={(e) => handleEditChange('experience', Number(e.target.value))}
+                  min="0"
+                />
+              </div>
+            </div>
+            <div className="edit-modal-actions">
+              <button className="btn-cancel" onClick={handleCancelEdit}>
+                Anuluj
+              </button>
+              <button className="btn-save" onClick={handleSaveEdit}>
+                💾 Zapisz zmiany
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

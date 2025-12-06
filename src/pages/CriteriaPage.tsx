@@ -8,46 +8,34 @@ interface Criterion {
   weight: number;
 }
 
-const defaultCriteria: Criterion[] = [
+interface ValidityCondition {
+  id: number;
+  name: string;
+  checked: boolean;
+}
+
+// Ustalone kryteria oceny (3 kryteria)
+const fixedCriteria: Criterion[] = [
   { id: 1, name: 'Cena', weight: 60 },
   { id: 2, name: 'Gwarancja', weight: 20 },
-  { id: 3, name: 'Termin realizacji', weight: 10 },
-  { id: 4, name: 'Doświadczenie wykonawcy', weight: 10 },
+  { id: 3, name: 'Termin realizacji', weight: 20 },
+];
+
+// Warunki ważności zamówienia
+const defaultValidityConditions: ValidityCondition[] = [
+  { id: 1, name: 'Obecność ubezpieczenia OC', checked: true },
+  { id: 2, name: 'Wpis do rejestru działalności gospodarczej', checked: true },
+  { id: 3, name: 'Brak zaległości podatkowych i ZUS', checked: true },
 ];
 
 export function CriteriaPage() {
-  const [criteria, setCriteria] = useState<Criterion[]>(defaultCriteria);
-  const [nextId, setNextId] = useState(defaultCriteria.length + 1);
+  const [validityConditions, setValidityConditions] = useState<ValidityCondition[]>(defaultValidityConditions);
   const navigate = useNavigate();
 
-  const handleNameChange = (id: number, newName: string) => {
-    setCriteria(prev =>
-      prev.map(c => (c.id === id ? { ...c, name: newName } : c))
+  const handleConditionChange = (id: number) => {
+    setValidityConditions(prev =>
+      prev.map(c => (c.id === id ? { ...c, checked: !c.checked } : c))
     );
-  };
-
-  const handleWeightChange = (id: number, newWeight: number) => {
-    setCriteria(prev =>
-      prev.map(c => (c.id === id ? { ...c, weight: newWeight } : c))
-    );
-  };
-
-  const handleAddCriterion = () => {
-    const newCriterion: Criterion = {
-      id: nextId,
-      name: `Nowe kryterium ${nextId}`,
-      weight: 0,
-    };
-    setCriteria(prev => [...prev, newCriterion]);
-    setNextId(prev => prev + 1);
-  };
-
-  const handleRemoveCriterion = (id: number) => {
-    if (criteria.length <= 1) {
-      alert('Musisz mieć przynajmniej jedno kryterium!');
-      return;
-    }
-    setCriteria(prev => prev.filter(c => c.id !== id));
   };
 
   const handleGoBack = () => {
@@ -58,9 +46,6 @@ export function CriteriaPage() {
     navigate('/analysis');
   };
 
-  const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
-  const isWeightValid = totalWeight === 100;
-
   return (
     <div className="criteria-page">
       <div className="criteria-container">
@@ -70,86 +55,89 @@ export function CriteriaPage() {
           </button>
           <h1>Kryteria oceny ofert</h1>
           <p className="criteria-subtitle">
-            Zdefiniuj kryteria, na podstawie których będą analizowane oferty
+            Przegląd kryteriów oceny oraz warunków ważności zamówienia
           </p>
         </div>
 
-        <div className="criteria-info-box">
-          <div className="info-icon">⚖️</div>
-          <div className="info-content">
-            <h3>Wagi kryteriów</h3>
-            <p>Suma wag wszystkich kryteriów powinna wynosić 100%</p>
+        {/* Sekcja kryteriów oceny */}
+        <div className="criteria-section">
+          <div className="section-header">
+            <span className="section-icon">⚖️</span>
+            <h2>Kryteria oceny ofert</h2>
           </div>
-          <div className={`weight-indicator ${isWeightValid ? 'valid' : 'invalid'}`}>
-            <span className="weight-value">{totalWeight}%</span>
-            <span className="weight-label">{isWeightValid ? '✓ Poprawne' : '⚠ Suma ≠ 100%'}</span>
-          </div>
-        </div>
+          <p className="section-description">
+            Poniższe kryteria będą brane pod uwagę przy ocenie ofert
+          </p>
 
-        <div className="criteria-list">
-          <div className="criteria-list-header">
-            <span className="col-num">Lp.</span>
-            <span className="col-name">Nazwa kryterium</span>
-            <span className="col-weight">Waga (%)</span>
-            <span className="col-actions">Akcje</span>
-          </div>
-
-          {criteria.map((criterion, index) => (
-            <div key={criterion.id} className="criterion-item">
-              <span className="col-num">{index + 1}</span>
-              <div className="col-name">
-                <input
-                  type="text"
-                  value={criterion.name}
-                  onChange={(e) => handleNameChange(criterion.id, e.target.value)}
-                  className="criterion-name-input"
-                  placeholder="Nazwa kryterium"
-                />
-              </div>
-              <div className="col-weight">
-                <input
-                  type="number"
-                  value={criterion.weight}
-                  onChange={(e) => handleWeightChange(criterion.id, Number(e.target.value))}
-                  className="criterion-weight-input"
-                  min="0"
-                  max="100"
-                />
-                <span className="weight-suffix">%</span>
-              </div>
-              <div className="col-actions">
-                <button
-                  className="btn-remove-criterion"
-                  onClick={() => handleRemoveCriterion(criterion.id)}
-                  title="Usuń kryterium"
-                >
-                  🗑️
-                </button>
-              </div>
+          <div className="criteria-list fixed">
+            <div className="criteria-list-header">
+              <span className="col-num">Lp.</span>
+              <span className="col-name">Nazwa kryterium</span>
+              <span className="col-weight">Waga</span>
             </div>
-          ))}
+
+            {fixedCriteria.map((criterion, index) => (
+              <div key={criterion.id} className="criterion-item fixed">
+                <span className="col-num">{index + 1}</span>
+                <div className="col-name">
+                  <span className="criterion-name-display">{criterion.name}</span>
+                </div>
+                <div className="col-weight">
+                  <span className="weight-display">{criterion.weight}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <button className="btn-add-criterion" onClick={handleAddCriterion}>
-          <span className="btn-icon">➕</span>
-          <span>Dodaj nowe kryterium</span>
-        </button>
+        {/* Sekcja warunków ważności */}
+        <div className="criteria-section">
+          <div className="section-header">
+            <span className="section-icon">✅</span>
+            <h2>Warunki ważności zamówienia</h2>
+          </div>
+          <p className="section-description">
+            Oferty muszą spełniać poniższe warunki formalne, aby być brane pod uwagę
+          </p>
+
+          <div className="criteria-list fixed">
+            <div className="criteria-list-header validity-header">
+              <span className="col-num">Lp.</span>
+              <span className="col-name">Warunek</span>
+              <span className="col-status">Status</span>
+            </div>
+
+            {validityConditions.map((condition, index) => (
+              <div key={condition.id} className="criterion-item fixed validity-row">
+                <span className="col-num">{index + 1}</span>
+                <div className="col-name">
+                  <span className="criterion-name-display">{condition.name}</span>
+                </div>
+                <div className="col-status">
+                  <label className="validity-toggle">
+                    <input
+                      type="checkbox"
+                      checked={condition.checked}
+                      onChange={() => handleConditionChange(condition.id)}
+                    />
+                    <span className={`status-badge ${condition.checked ? 'active' : 'inactive'}`}>
+                      {condition.checked ? '✓ Wymagane' : '✗ Niewymagane'}
+                    </span>
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="criteria-actions">
           <button
             className="btn-go-to-analysis"
             onClick={handleGoToAnalysis}
-            disabled={!isWeightValid}
-            title={!isWeightValid ? 'Suma wag musi wynosić 100%' : ''}
           >
             <span>Przejdź do analizy ofert</span>
             <span className="arrow-icon">→</span>
           </button>
-          {!isWeightValid && (
-            <p className="weight-warning">
-              ⚠️ Suma wag kryteriów musi wynosić 100%, aby kontynuować
-            </p>
-          )}
         </div>
       </div>
     </div>
