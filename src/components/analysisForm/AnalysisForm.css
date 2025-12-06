@@ -14,12 +14,36 @@
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid #e5e7eb;
+  gap: 1rem;
 }
 
 .analysis-form-header h2 {
   margin: 0;
   font-size: 1.5rem;
   color: #1f2937;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-go-back {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-go-back:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
 }
 
 .close-button {

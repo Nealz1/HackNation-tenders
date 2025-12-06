@@ -1,0 +1,350 @@
+.offers-list-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.offers-list-container {
+  max-width: 900px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 2.5rem;
+  margin-top: 1rem;
+}
+
+.offers-list-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.btn-back-nav {
+  position: absolute;
+  left: 2.5rem;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back-nav:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.offers-list-header {
+  position: relative;
+}
+
+.offers-list-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+  color: #1f2937;
+}
+
+.offers-list-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* Stats section */
+.offers-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 1px solid #7dd3fc;
+  border-radius: 12px;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0369a1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #0c4a6e;
+  font-weight: 500;
+}
+
+/* Table section */
+.offers-table-section {
+  margin-bottom: 2rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.table-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #1f2937;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.btn-add-from-file {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-from-file:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Table */
+.offers-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.offers-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.offers-table thead {
+  background: #f9fafb;
+}
+
+.offers-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.offers-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.offers-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.offers-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.col-number {
+  width: 50px;
+  text-align: center;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.col-company {
+  font-weight: 600;
+}
+
+.col-filename {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4b5563;
+}
+
+.file-icon {
+  font-size: 1.1rem;
+}
+
+.col-source {
+  white-space: nowrap;
+}
+
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.source-badge.e-zamowienia {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.source-badge.local {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.col-date {
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.col-actions {
+  width: 60px;
+  text-align: center;
+}
+
+.btn-remove-offer {
+  padding: 0.4rem 0.6rem;
+  background: transparent;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-offer:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+}
+
+/* No offers */
+.no-offers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.no-offers-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.no-offers p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.no-offers-hint {
+  margin-top: 0.5rem !important;
+  font-size: 0.95rem !important;
+  color: #9ca3af !important;
+}
+
+/* Actions */
+.offers-list-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e5e7eb;
+}
+
+.btn-go-to-analysis {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-go-to-analysis:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+}
+
+.btn-go-to-analysis:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-go-to-analysis .arrow-icon {
+  font-size: 1.25rem;
+  transition: transform 0.2s;
+}
+
+.btn-go-to-analysis:hover:not(:disabled) .arrow-icon {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .offers-list-page {
+    padding: 1rem;
+  }
+
+  .offers-list-container {
+    padding: 1.5rem;
+  }
+
+  .offers-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .table-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .btn-back-nav {
+    position: static;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+
+  .offers-table th,
+  .offers-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+}

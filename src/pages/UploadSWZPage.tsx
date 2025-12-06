@@ -27,7 +27,7 @@ export function UploadSWZPage() {
   };
 
   const handleGoToOffers = () => {
-    navigate('/analysis');
+    navigate('/offers-list');
   };
 
   return (

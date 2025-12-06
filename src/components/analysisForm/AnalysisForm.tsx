@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { Document, Packer, Paragraph } from 'docx';
 import { saveAs } from 'file-saver';
@@ -34,6 +35,20 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    if (offers.length > 0) {
+      const confirmed = window.confirm(
+        'Uwaga! Wszystkie wprowadzone dane ofert zostaną utracone. Czy na pewno chcesz kontynuować?'
+      );
+      if (confirmed) {
+        navigate('/upload-swz');
+      }
+    } else {
+      navigate('/upload-swz');
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -219,6 +234,9 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
   return (
     <div className="analysis-form-container">
       <div className="analysis-form-header">
+        <button className="btn-go-back" onClick={handleGoBack}>
+          ← Powrót
+        </button>
         <h2>Analiza Ofert Przetargowych</h2>
         {onClose && (
           <button className="close-button" onClick={onClose}>
