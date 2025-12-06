@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
+import { Document, Packer, Paragraph } from 'docx';
+import { saveAs } from 'file-saver';
 import './AnalysisForm.css';
 
 interface FormData {
@@ -97,6 +99,71 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
 
   const handleBackToOffers = () => {
     setShowAnalysis(false);
+  };
+
+  // Funkcja do iteracyjnego wyznaczania ofert poza zakresem ±30%
+  const calculateOutliers = (offersList: Offer[]): Set<number> => {
+    const excludedIds = new Set<number>();
+    let remainingOffers = [...offersList];
+    
+    while (remainingOffers.length > 0) {
+      // Oblicz średnią dla pozostałych ofert
+      const avgPrice = remainingOffers.reduce((sum, o) => sum + Number(o.price), 0) / remainingOffers.length;
+      const upperLimit = avgPrice * 1.3;
+      const lowerLimit = avgPrice * 0.7;
+      
+      // Znajdź ofertę najbardziej odstającą
+      let maxDeviation = 0;
+      let mostOutlier: Offer | null = null;
+      
+      for (const offer of remainingOffers) {
+        const price = Number(offer.price);
+        if (price > upperLimit || price < lowerLimit) {
+          const deviation = Math.abs((price - avgPrice) / avgPrice);
+          if (deviation > maxDeviation) {
+            maxDeviation = deviation;
+            mostOutlier = offer;
+          }
+        }
+      }
+      
+      // Jeśli nie ma już ofert poza zakresem, kończymy
+      if (!mostOutlier) {
+        break;
+      }
+      
+      // Wyklucz najbardziej odstającą ofertę i powtórz
+      excludedIds.add(mostOutlier.id);
+      remainingOffers = remainingOffers.filter(o => o.id !== mostOutlier!.id);
+      
+      // Jeśli zostanie mniej niż 2 oferty, nie ma sensu dalej liczyć
+      if (remainingOffers.length < 2) {
+        break;
+      }
+    }
+    
+    return excludedIds;
+  };
+
+  const handleGenerateExplanationRequest = async (companyName: string) => {
+    // Utwórz pusty dokument Word
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              text: "",
+            }),
+          ],
+        },
+      ],
+    });
+
+    // Generuj plik i pobierz
+    const blob = await Packer.toBlob(doc);
+    const fileName = `prosba_o_wyjasnienia_${companyName.replace(/\s+/g, '_')}.docx`;
+    saveAs(blob, fileName);
   };
 
   const handleExportToExcel = () => {
@@ -321,40 +388,50 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
               </button>
               
               {(() => {
-                const averagePrice = offers.reduce((sum, o) => sum + Number(o.price), 0) / offers.length;
-                const upperLimit = averagePrice * 1.3; // +30%
-                const lowerLimit = averagePrice * 0.7; // -30%
-
-                const isPriceOutOfRange = (price: number) => {
-                  return price > upperLimit || price < lowerLimit;
-                };
+                // Oblicz wykluczone oferty iteracyjnie
+                const excludedIds = calculateOutliers(offers);
+                
+                // Oferty które liczą się do średniej (nie wykluczone)
+                const includedOffers = offers.filter(o => !excludedIds.has(o.id));
+                
+                // Średnia z ofert które się liczą
+                const averagePrice = includedOffers.length > 0 
+                  ? includedOffers.reduce((sum, o) => sum + Number(o.price), 0) / includedOffers.length
+                  : 0;
+                const upperLimit = averagePrice * 1.3;
+                const lowerLimit = averagePrice * 0.7;
 
                 return (
                   <>
                     <div className="analysis-content">
                       <h3>Analiza danych ofertowych</h3>
                       <div className="analysis-avg-info">
-                        <span>Średnia cena: <strong>{averagePrice.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}</strong></span>
+                        <span>Średnia cena (po wykluczeniu odstających): <strong>{averagePrice.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}</strong></span>
                         <span className="avg-range">
-                          Zakres normalny: {lowerLimit.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} - {upperLimit.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                          Zakres normalny (±30%): {lowerLimit.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} - {upperLimit.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                        </span>
+                        <span className="avg-included">
+                          Oferty uwzględnione w średniej: {includedOffers.length} z {offers.length}
                         </span>
                       </div>
                       
                       {offers.map((offer, index) => {
                         const price = Number(offer.price);
-                        const isOutOfRange = isPriceOutOfRange(price);
-                        const percentDiff = ((price - averagePrice) / averagePrice * 100).toFixed(1);
+                        const isExcluded = excludedIds.has(offer.id);
+                        const percentDiff = averagePrice > 0 
+                          ? ((price - averagePrice) / averagePrice * 100).toFixed(1)
+                          : '0';
                         
                         return (
                           <div 
                             key={offer.id} 
-                            className={`analysis-offer-section ${isOutOfRange ? 'out-of-range' : ''}`}
+                            className={`analysis-offer-section ${isExcluded ? 'out-of-range' : ''}`}
                           >
-                            <div className={`analysis-offer-header ${isOutOfRange ? 'warning' : ''}`}>
+                            <div className={`analysis-offer-header ${isExcluded ? 'warning' : ''}`}>
                               <h4>Oferta oferenta {index + 1}: {offer.companyName}</h4>
-                              {isOutOfRange && (
+                              {isExcluded && (
                                 <span className="warning-badge">
-                                  ⚠️ {Number(percentDiff) > 0 ? '+' : ''}{percentDiff}% od średniej
+                                  ⚠️ WYKLUCZONA ({Number(percentDiff) > 0 ? '+' : ''}{percentDiff}%)
                                 </span>
                               )}
                             </div>
@@ -369,13 +446,13 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
                                     <td className="table-label">Opis oferty:</td>
                                     <td className="table-value">{offer.offerDescription}</td>
                                   </tr>
-                                  <tr className={`highlight-row ${isOutOfRange ? 'warning-row' : ''}`}>
+                                  <tr className={`highlight-row ${isExcluded ? 'warning-row' : ''}`}>
                                     <td className="table-label">Cena:</td>
-                                    <td className={`table-value price ${isOutOfRange ? 'warning-price' : ''}`}>
+                                    <td className={`table-value price ${isExcluded ? 'warning-price' : ''}`}>
                                       {price.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-                                      {isOutOfRange && (
+                                      {isExcluded && (
                                         <span className="price-diff">
-                                          ({Number(percentDiff) > 0 ? '+' : ''}{percentDiff}%)
+                                          ({Number(percentDiff) > 0 ? '+' : ''}{percentDiff}% od średniej)
                                         </span>
                                       )}
                                     </td>
@@ -384,8 +461,24 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
                                     <td className="table-label">Gwarancja:</td>
                                     <td className="table-value warranty">{offer.warranty} miesięcy</td>
                                   </tr>
+                                  <tr>
+                                    <td className="table-label">Status:</td>
+                                    <td className={`table-value ${isExcluded ? 'status-excluded' : 'status-included'}`}>
+                                      {isExcluded ? '❌ Wykluczona ze średniej' : '✓ Uwzględniona w średniej'}
+                                    </td>
+                                  </tr>
                                 </tbody>
                               </table>
+                              {isExcluded && (
+                                <div className="explanation-request-section">
+                                  <button 
+                                    className="btn-explanation-request"
+                                    onClick={() => handleGenerateExplanationRequest(offer.companyName)}
+                                  >
+                                    📄 Generuj prośbę o wyjaśnienia
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         );
@@ -396,19 +489,19 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
                       <h4>Podsumowanie analizy:</h4>
                       <div className="summary-grid">
                         <div className="summary-item">
-                          <span className="summary-label">Najniższa cena:</span>
+                          <span className="summary-label">Najniższa cena (wszystkie):</span>
                           <span className="summary-value">
                             {Number(Math.min(...offers.map(o => Number(o.price)))).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
                           </span>
                         </div>
                         <div className="summary-item">
-                          <span className="summary-label">Najwyższa cena:</span>
+                          <span className="summary-label">Najwyższa cena (wszystkie):</span>
                           <span className="summary-value">
                             {Number(Math.max(...offers.map(o => Number(o.price)))).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
                           </span>
                         </div>
                         <div className="summary-item highlight-avg">
-                          <span className="summary-label">Średnia cena:</span>
+                          <span className="summary-label">Średnia cena (po wykluczeniu):</span>
                           <span className="summary-value">
                             {averagePrice.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
                           </span>
@@ -422,8 +515,14 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
                       </div>
                       <div className="out-of-range-count">
                         <span className="warning-icon">⚠️</span>
-                        <span>Oferty poza zakresem ±30%: <strong>{offers.filter(o => isPriceOutOfRange(Number(o.price))).length}</strong> z {offers.length}</span>
+                        <span>Oferty wykluczone (poza ±30%): <strong>{excludedIds.size}</strong> z {offers.length}</span>
                       </div>
+                      {includedOffers.length > 0 && (
+                        <div className="included-offers-info">
+                          <span className="success-icon">✓</span>
+                          <span>Oferty uwzględnione w średniej: <strong>{includedOffers.length}</strong></span>
+                        </div>
+                      )}
                     </div>
                   </>
                 );
