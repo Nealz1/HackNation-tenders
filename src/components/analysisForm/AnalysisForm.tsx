@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import * as XLSX from 'xlsx';
 import './AnalysisForm.css';
 
 interface FormData {
@@ -10,6 +11,7 @@ interface FormData {
 
 interface Offer extends FormData {
   id: number;
+  pdfFile?: File | null;
 }
 
 interface AnalysisFormProps {
@@ -28,6 +30,8 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [nextId, setNextId] = useState(1);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -37,15 +41,37 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      setPdfFile(file);
+    } else if (file) {
+      alert('Proszę wybrać plik w formacie PDF');
+      e.target.value = '';
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setPdfFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleAddOffer = (e: React.FormEvent) => {
     e.preventDefault();
     const newOffer: Offer = {
       ...formData,
       id: nextId,
+      pdfFile: pdfFile,
     };
     setOffers(prev => [...prev, newOffer]);
     setNextId(prev => prev + 1);
     setFormData(emptyFormData);
+    setPdfFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     setShowAnalysis(false); // Reset analysis view when adding new offer
   };
 
@@ -71,6 +97,54 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
 
   const handleBackToOffers = () => {
     setShowAnalysis(false);
+  };
+
+  const handleExportToExcel = () => {
+    // Przygotuj dane do eksportu
+    const exportData = offers.map((offer, index) => ({
+      'Nr oferty': index + 1,
+      'Nazwa firmy': offer.companyName,
+      'Opis oferty': offer.offerDescription,
+      'Cena (PLN)': Number(offer.price),
+      'Gwarancja (miesiące)': Number(offer.warranty),
+      'Załącznik PDF': offer.pdfFile ? offer.pdfFile.name : 'Brak',
+    }));
+
+    // Utwórz arkusz
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    // Ustaw szerokość kolumn
+    worksheet['!cols'] = [
+      { wch: 10 },  // Nr oferty
+      { wch: 25 },  // Nazwa firmy
+      { wch: 40 },  // Opis oferty
+      { wch: 15 },  // Cena
+      { wch: 20 },  // Gwarancja
+      { wch: 25 },  // Załącznik PDF
+    ];
+
+    // Utwórz skoroszyt
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Oferty');
+
+    // Dodaj arkusz z podsumowaniem
+    const summaryData = [
+      { 'Parametr': 'Liczba ofert', 'Wartość': offers.length },
+      { 'Parametr': 'Najniższa cena (PLN)', 'Wartość': Math.min(...offers.map(o => Number(o.price))) },
+      { 'Parametr': 'Najwyższa cena (PLN)', 'Wartość': Math.max(...offers.map(o => Number(o.price))) },
+      { 'Parametr': 'Średnia cena (PLN)', 'Wartość': (offers.reduce((sum, o) => sum + Number(o.price), 0) / offers.length).toFixed(2) },
+      { 'Parametr': 'Najdłuższa gwarancja (miesiące)', 'Wartość': Math.max(...offers.map(o => Number(o.warranty))) },
+    ];
+    const summaryWorksheet = XLSX.utils.json_to_sheet(summaryData);
+    summaryWorksheet['!cols'] = [
+      { wch: 30 },
+      { wch: 20 },
+    ];
+    XLSX.utils.book_append_sheet(workbook, summaryWorksheet, 'Podsumowanie');
+
+    // Zapisz plik
+    const fileName = `analiza_ofert_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
   };
 
   const isFormValid = formData.companyName && formData.offerDescription && formData.price && formData.warranty;
@@ -151,6 +225,31 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
           </div>
         </div>
 
+        <div className="form-group">
+          <label htmlFor="pdfFile">Załącznik PDF</label>
+          <div className="file-upload-container">
+            <input
+              type="file"
+              id="pdfFile"
+              ref={fileInputRef}
+              accept=".pdf,application/pdf"
+              onChange={handleFileChange}
+              className="file-input"
+            />
+            <label htmlFor="pdfFile" className="file-upload-button">
+              📄 Wybierz plik PDF
+            </label>
+            {pdfFile && (
+              <div className="file-selected">
+                <span className="file-name">{pdfFile.name}</span>
+                <button type="button" className="btn-remove-file" onClick={handleRemoveFile}>
+                  ×
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="form-actions">
           <button type="button" className="btn-secondary" onClick={handleReset}>
             Wyczyść
@@ -166,6 +265,9 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
           <div className="results-header">
             <h3>Dodane oferty ({offers.length}):</h3>
             <div className="results-header-actions">
+              <button className="btn-export" onClick={handleExportToExcel}>
+                📥 Eksport do Excel
+              </button>
               <button className="btn-analyze" onClick={handleAnalyze} disabled={showAnalysis}>
                 📊 Analizuj dane
               </button>
@@ -218,71 +320,114 @@ export function AnalysisForm({ onClose }: AnalysisFormProps) {
                 ← Wróć do listy ofert
               </button>
               
-              <div className="analysis-content">
-                <h3>Analiza danych ofertowych</h3>
-                
-                {offers.map((offer, index) => (
-                  <div key={offer.id} className="analysis-offer-section">
-                    <div className="analysis-offer-header">
-                      <h4>Oferta oferenta {index + 1}: {offer.companyName}</h4>
-                    </div>
-                    <div className="analysis-offer-details">
-                      <table className="analysis-table">
-                        <tbody>
-                          <tr>
-                            <td className="table-label">Nazwa firmy:</td>
-                            <td className="table-value">{offer.companyName}</td>
-                          </tr>
-                          <tr>
-                            <td className="table-label">Opis oferty:</td>
-                            <td className="table-value">{offer.offerDescription}</td>
-                          </tr>
-                          <tr className="highlight-row">
-                            <td className="table-label">Cena:</td>
-                            <td className="table-value price">
-                              {Number(offer.price).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-                            </td>
-                          </tr>
-                          <tr className="highlight-row">
-                            <td className="table-label">Gwarancja:</td>
-                            <td className="table-value warranty">{offer.warranty} miesięcy</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {(() => {
+                const averagePrice = offers.reduce((sum, o) => sum + Number(o.price), 0) / offers.length;
+                const upperLimit = averagePrice * 1.3; // +30%
+                const lowerLimit = averagePrice * 0.7; // -30%
 
-              <div className="offers-summary">
-                <h4>Podsumowanie analizy:</h4>
-                <div className="summary-grid">
-                  <div className="summary-item">
-                    <span className="summary-label">Najniższa cena:</span>
-                    <span className="summary-value">
-                      {Number(Math.min(...offers.map(o => Number(o.price)))).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-                    </span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="summary-label">Najwyższa cena:</span>
-                    <span className="summary-value">
-                      {Number(Math.max(...offers.map(o => Number(o.price)))).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-                    </span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="summary-label">Średnia cena:</span>
-                    <span className="summary-value">
-                      {(offers.reduce((sum, o) => sum + Number(o.price), 0) / offers.length).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-                    </span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="summary-label">Najdłuższa gwarancja:</span>
-                    <span className="summary-value">
-                      {Math.max(...offers.map(o => Number(o.warranty)))} miesięcy
-                    </span>
-                  </div>
-                </div>
-              </div>
+                const isPriceOutOfRange = (price: number) => {
+                  return price > upperLimit || price < lowerLimit;
+                };
+
+                return (
+                  <>
+                    <div className="analysis-content">
+                      <h3>Analiza danych ofertowych</h3>
+                      <div className="analysis-avg-info">
+                        <span>Średnia cena: <strong>{averagePrice.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}</strong></span>
+                        <span className="avg-range">
+                          Zakres normalny: {lowerLimit.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} - {upperLimit.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                        </span>
+                      </div>
+                      
+                      {offers.map((offer, index) => {
+                        const price = Number(offer.price);
+                        const isOutOfRange = isPriceOutOfRange(price);
+                        const percentDiff = ((price - averagePrice) / averagePrice * 100).toFixed(1);
+                        
+                        return (
+                          <div 
+                            key={offer.id} 
+                            className={`analysis-offer-section ${isOutOfRange ? 'out-of-range' : ''}`}
+                          >
+                            <div className={`analysis-offer-header ${isOutOfRange ? 'warning' : ''}`}>
+                              <h4>Oferta oferenta {index + 1}: {offer.companyName}</h4>
+                              {isOutOfRange && (
+                                <span className="warning-badge">
+                                  ⚠️ {Number(percentDiff) > 0 ? '+' : ''}{percentDiff}% od średniej
+                                </span>
+                              )}
+                            </div>
+                            <div className="analysis-offer-details">
+                              <table className="analysis-table">
+                                <tbody>
+                                  <tr>
+                                    <td className="table-label">Nazwa firmy:</td>
+                                    <td className="table-value">{offer.companyName}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="table-label">Opis oferty:</td>
+                                    <td className="table-value">{offer.offerDescription}</td>
+                                  </tr>
+                                  <tr className={`highlight-row ${isOutOfRange ? 'warning-row' : ''}`}>
+                                    <td className="table-label">Cena:</td>
+                                    <td className={`table-value price ${isOutOfRange ? 'warning-price' : ''}`}>
+                                      {price.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                                      {isOutOfRange && (
+                                        <span className="price-diff">
+                                          ({Number(percentDiff) > 0 ? '+' : ''}{percentDiff}%)
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                  <tr className="highlight-row">
+                                    <td className="table-label">Gwarancja:</td>
+                                    <td className="table-value warranty">{offer.warranty} miesięcy</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="offers-summary">
+                      <h4>Podsumowanie analizy:</h4>
+                      <div className="summary-grid">
+                        <div className="summary-item">
+                          <span className="summary-label">Najniższa cena:</span>
+                          <span className="summary-value">
+                            {Number(Math.min(...offers.map(o => Number(o.price)))).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                          </span>
+                        </div>
+                        <div className="summary-item">
+                          <span className="summary-label">Najwyższa cena:</span>
+                          <span className="summary-value">
+                            {Number(Math.max(...offers.map(o => Number(o.price)))).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                          </span>
+                        </div>
+                        <div className="summary-item highlight-avg">
+                          <span className="summary-label">Średnia cena:</span>
+                          <span className="summary-value">
+                            {averagePrice.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                          </span>
+                        </div>
+                        <div className="summary-item">
+                          <span className="summary-label">Najdłuższa gwarancja:</span>
+                          <span className="summary-value">
+                            {Math.max(...offers.map(o => Number(o.warranty)))} miesięcy
+                          </span>
+                        </div>
+                      </div>
+                      <div className="out-of-range-count">
+                        <span className="warning-icon">⚠️</span>
+                        <span>Oferty poza zakresem ±30%: <strong>{offers.filter(o => isPriceOutOfRange(Number(o.price))).length}</strong> z {offers.length}</span>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           )}
         </div>

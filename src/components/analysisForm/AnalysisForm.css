@@ -96,6 +96,80 @@
   }
 }
 
+/* File upload styles */
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-upload-button:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  margin-top: 0.25rem;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #92400e;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-remove-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #fca5a5;
+  color: #991b1b;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-file:hover {
+  background: #f87171;
+  color: white;
+}
+
 .form-actions {
   display: flex;
   gap: 1rem;
@@ -250,6 +324,25 @@
 .btn-clear-all:hover {
   background: #fee2e2;
   border-color: #f87171;
+}
+
+/* Export button */
+.btn-export {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-export:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
 }
 
 /* Offers list */
@@ -542,4 +635,95 @@
 .analysis-table .table-value.warranty {
   color: #2563eb;
   font-size: 1.1rem;
+}
+
+/* Out of range styles */
+.analysis-avg-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #fefce8, #fef9c3);
+  border: 1px solid #facc15;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: #713f12;
+}
+
+.analysis-avg-info strong {
+  color: #a16207;
+}
+
+.avg-range {
+  font-size: 0.85rem;
+  color: #92400e;
+}
+
+.analysis-offer-section.out-of-range {
+  border: 3px solid #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.analysis-offer-header.warning {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+}
+
+.warning-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+}
+
+.analysis-table .warning-row {
+  background: linear-gradient(90deg, #fef2f2, #fee2e2) !important;
+}
+
+.analysis-table .table-value.warning-price {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+.price-diff {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.summary-item.highlight-avg {
+  background: linear-gradient(135deg, #fef9c3, #fef08a);
+  border-color: #facc15;
+}
+
+.summary-item.highlight-avg .summary-value {
+  color: #a16207;
+}
+
+.out-of-range-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #991b1b;
+  font-size: 0.9rem;
+}
+
+.out-of-range-count .warning-icon {
+  font-size: 1.1rem;
+}
+
+.out-of-range-count strong {
+  color: #dc2626;
 }
