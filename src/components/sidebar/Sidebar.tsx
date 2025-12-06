@@ -119,7 +119,7 @@ const ChatHistoryItem = ({
           <DotsVerticalIcon />
         </button>
         {chatMenu.isOpen && dropdownPosition && (
-          <div 
+          <div
             className="chat-dropdown"
             style={{
               top: `${dropdownPosition.top}px`,
@@ -231,7 +231,7 @@ export const Sidebar = ({
           </button>
 
           {/* removed background logo per request */}
-          {sidebarOpen && <h2>DataServe</h2>}
+          {sidebarOpen && null}
         </div>
 
         {sidebarOpen ? (

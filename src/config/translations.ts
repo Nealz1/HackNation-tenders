@@ -18,11 +18,11 @@ export const translations = {
       cancel: "Anuluj",
     },
     header: {
-      title: "SourceMate",
+      title: "Asystent tworzenia przetargów",
       moreOptions: "Więcej opcji",
     },
     chat: {
-      placeholder: "Wiadomość do SourceMate...",
+      placeholder: "Wiadomość do Asystenta...",
       serverError: "❌ Błąd serwera!",
       requestCancelled: "⏹️ Żądanie anulowane.",
       formGenerated: "📄 Wygenerowano formularz",
