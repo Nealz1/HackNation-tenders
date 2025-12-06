@@ -218,6 +218,12 @@
   border: 1px solid #93c5fd;
 }
 
+.source-badge.webcon {
+  background: #f5f3ff;
+  color: #6b21a8;
+  border: 1px solid #c4b5fd;
+}
+
 .col-date {
   color: #6b7280;
   white-space: nowrap;

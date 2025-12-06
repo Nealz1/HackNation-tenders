@@ -404,6 +404,47 @@
   font-size: 0.9rem;
 }
 
+.offer-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-view-file,
+.btn-edit-offer {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-view-file {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.btn-view-file:hover {
+  background: #bfdbfe;
+  border-color: #60a5fa;
+}
+
+.btn-edit-offer {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.btn-edit-offer:hover {
+  background: #fde68a;
+  border-color: #f59e0b;
+}
+
 .btn-delete-offer {
   width: 24px;
   height: 24px;

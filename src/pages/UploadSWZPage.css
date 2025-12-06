@@ -70,7 +70,8 @@
 }
 
 .btn-upload-device,
-.btn-upload-ezamowienia {
+.btn-upload-ezamowienia,
+.btn-upload-webcon {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,6 +104,17 @@
   background: linear-gradient(135deg, #059669, #047857);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+}
+
+.btn-upload-webcon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+.btn-upload-webcon:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
 }
 
 .btn-icon {

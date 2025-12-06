@@ -6,7 +6,7 @@ interface OfferFile {
   id: number;
   fileName: string;
   companyName: string;
-  source: 'e-zamowienia' | 'local';
+  source: 'e-zamowienia' | 'local' | 'webcon';
   dateAdded: string;
 }
 
@@ -30,7 +30,7 @@ const mockOffersFromSystem: OfferFile[] = [
     id: 3,
     fileName: 'Oferta_InfraPol_SA.pdf',
     companyName: 'InfraPol S.A.',
-    source: 'e-zamowienia',
+    source: 'webcon',
     dateAdded: '2025-12-05',
   },
 ];
@@ -70,8 +70,8 @@ export function OffersListPage() {
     setOffers(prev => prev.filter(offer => offer.id !== id));
   };
 
-  const handleGoToAnalysis = () => {
-    navigate('/analysis');
+  const handleGoToCriteria = () => {
+    navigate('/criteria');
   };
 
   const handleGoBack = () => {
@@ -146,7 +146,8 @@ export function OffersListPage() {
                       </td>
                       <td className="col-source">
                         <span className={`source-badge ${offer.source}`}>
-                          {offer.source === 'e-zamowienia' ? '🌐 e-zamówienia' : '📁 Plik lokalny'}
+                          {offer.source === 'e-zamowienia' ? '🌐 e-zamówienia' : 
+                           offer.source === 'webcon' ? '🔮 Webcon' : '📁 Plik lokalny'}
                         </span>
                       </td>
                       <td className="col-date">{offer.dateAdded}</td>
@@ -176,10 +177,10 @@ export function OffersListPage() {
         <div className="offers-list-actions">
           <button 
             className="btn-go-to-analysis" 
-            onClick={handleGoToAnalysis}
+            onClick={handleGoToCriteria}
             disabled={offers.length === 0}
           >
-            <span>Przejdź do analizy wyników</span>
+            <span>Przejdź do kryteriów oceny</span>
             <span className="arrow-icon">→</span>
           </button>
         </div>

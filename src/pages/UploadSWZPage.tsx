@@ -26,6 +26,12 @@ export function UploadSWZPage() {
     setFileAttached(true);
   };
 
+  const handleFetchFromWebcon = () => {
+    // Symulacja pobrania danych z systemu Webcon
+    setFileName('SWZ_webcon.pdf');
+    setFileAttached(true);
+  };
+
   const handleGoToOffers = () => {
     navigate('/offers-list');
   };
@@ -65,6 +71,12 @@ export function UploadSWZPage() {
             <span className="btn-icon">🌐</span>
             <span className="btn-text">Pobierz dane z systemu e-zamówienia</span>
             <span className="btn-description">Importuj automatycznie z platformy</span>
+          </button>
+
+          <button className="btn-upload-webcon" onClick={handleFetchFromWebcon}>
+            <span className="btn-icon">🔮</span>
+            <span className="btn-text">Pobierz dane z systemu WebCon</span>
+            <span className="btn-description">Importuj automatycznie z WebCon</span>
           </button>
         </div>
 
