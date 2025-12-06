@@ -1,0 +1,14 @@
+.analysis-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .analysis-page {
+    padding: 1rem;
+  }
+}
